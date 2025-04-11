@@ -6,9 +6,12 @@ const cors = require("cors");
 const app = express();
 
 const userRouter = require("./Routes/user");
-const authRouter = require("./Routes/auth");
-const authenticationMiddleware=require('C:\Users\My Lap\Documents\sem 4\Software Engneering\SE-Project\Middleware\authenticationMiddleware.js')
+const { authenticateUser, authorizeRoles } = require('./Middleware/authenticationMiddleware');
+//fixed the path of authenticationMiddleware to use relative path
 
+//const authRouter = require("./Routes/auth");
+//const authenticationMiddleware = require('./Middleware/authenticationMiddleware');
+//const authenticationMiddleware=require('C:\Users\My Lap\Documents\sem 4\Software Engneering\SE-Project\Middleware\authenticationMiddleware.js')
 
 
 require('dotenv').config();
@@ -26,9 +29,19 @@ app.use(
   })
 );
 
-app.use("/api/v1", authRouter);
-app.use(authenticationMiddleware);
-app.use("/api/v1/users", userRouter);
+// used authenticationMiddleware as we do not have route/auth
+// // Protect all /api/v1/users routes with authentication middleware
+app.use("/api/v1/users", authenticateUser, userRouter);
+
+// Example admin route with role-based access control
+app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) => {
+    res.send("Welcome, Admin!");
+});
+
+
+//app.use("/api/v1", authRouter);  // commented out the authRouter, try before uncommenting
+//app.use(authenticationMiddleware);
+//app.use("/api/v1/users", userRouter);
 
 const db_name = process.env.DB_NAME;
 

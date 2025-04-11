@@ -1,6 +1,6 @@
 const express = require("express");
-const { registerUser, loginUser, getUserProfile, updateUserProfile } = require("../controllers/userController");
-const { authenticateUser, authorizeRoles } = require("../middleware/auth"); // Corrected path
+const { registerUser, loginUser, getUserProfile, updateUserProfile } = require("../Controllers/userController");
+const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware"); // Corrected path
 
 const router = express.Router();
 

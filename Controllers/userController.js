@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("C:\Users\My Lap\Documents\sem 4\Software Engneering\SE-Project\Models\User.js");
+const User = require('../Models/User');
+//changed the path of User to use relative path
+//const User = require("C:\Users\My Lap\Documents\sem 4\Software Engneering\SE-Project\Models\User.js");
 
 // User Registration
 const registerUser = async (req, res) => {
