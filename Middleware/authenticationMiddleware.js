@@ -1,3 +1,44 @@
+
+
+const jwt = require("jsonwebtoken");
+const User = require("../Models/User");
+
+// Authenticate user
+const authenticateUser = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return res.status(401).json({ message: "Authorization token required" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Invalid or expired token" });
+  }
+};
+
+// Role-based access control
+const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Access forbidden: Insufficient permissions" });
+    }
+    next();
+  };
+};
+
+module.exports = { authenticateUser, authorizeRoles };
+
+
+
+/*
 // middleware/auth.js
 const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
@@ -26,3 +67,4 @@ const authorizeRole = (role) => (req, res, next) => {
 };
 
 module.exports = { authenticateUser, authorizeRole };
+*/
