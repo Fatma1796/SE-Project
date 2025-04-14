@@ -31,7 +31,7 @@ app.use(
 
 // used authenticationMiddleware as we do not have route/auth
 // // Protect all /api/v1/users routes with authentication middleware
-app.use("/api/v1/users", authenticateUser, userRouter);
+app.use("/api/v1/users", userRouter);
 
 // Example admin route with role-based access control
 app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) => {
