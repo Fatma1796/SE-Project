@@ -6,9 +6,10 @@ const User = require('../Models/User');
 
 // User Registration
 const registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  
 
   try {
+    const { name, email, password, role } = req.body;
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -17,7 +18,7 @@ const registerUser = async (req, res) => {
 
     // Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
-
+console.log("password hashed");
     // Create new user
     const newUser = new User({
       name,
@@ -25,14 +26,14 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       role,
     });
-
+console.log("before saving user");
     await newUser.save();
-
+console.log("user saved");
     // Generate JWT token
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    //const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.status(201).json({
-      message: "User registered successfully",
+      message: "User registered successfully"
       // token,
       // user: {
       //   id: newUser._id,
