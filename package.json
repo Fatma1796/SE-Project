@@ -4,7 +4,9 @@
   "description": "The **Online Event Ticketing System** is a full-stack web application designed to streamline the process of browsing, booking, and managing tickets for events. The system supports three user roles: **Standard User**, **Event Organizer**, and **System Admin**, each with distinct functionalities. Users can browse events, book tickets, and view their booking history, while organizers can manage events. The system admin has full control over users and events.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+    
   },
   "repository": {
     "type": "git",
