@@ -45,8 +45,8 @@ app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) =
 
 const db_name = process.env.DB_NAME;
 
-const db_url = `${process.env.DB_URL}/${db_name}`;
-
+//const db_url = `${process.env.DB_URL}/${db_name}`;
+const db_url = "mongodb://localhost:27017/Schema";
 mongoose
   .connect(db_url)
   .then(() => console.log("mongoDB connected"))
