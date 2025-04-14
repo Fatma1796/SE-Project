@@ -9,9 +9,12 @@ const registerUser = async (req, res) => {
   
 
   try {
+    console.log("inside registerUser");
     const { name, email, password, role } = req.body;
     // Check if user already exists
+    console.log("before checking user exists");
     const userExists = await User.findOne({ email });
+    console.log("after checking user exists");
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }

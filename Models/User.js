@@ -29,4 +29,4 @@ const userSchema = new mongoose.Schema(
 
 module.exports = mongoose.model("User", userSchema);
 
-console.log("Hello World") // can be removed, just to check if the file is being executed
+//console.log("Hello World") // can be removed, just to check if the file is being executed
