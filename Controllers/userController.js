@@ -49,8 +49,74 @@ console.log("user saved");
     res.status(500).json({ message: "Server error, please try again later" });
   }
 };
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-// User Login
+  try {
+    console.log("Inside loginUser function");
+
+    // Validate input
+    if (!email || !password) {
+      console.error("Email or password is missing");
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    // Find the user by email
+    console.log("Finding user by email:", email);
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log("User not found");
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    console.log("User found:", user);
+
+    // Compare passwords
+    console.log("Comparing passwords");
+    if (!password || !user.password) {
+      console.error("Password or user password is missing");
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.log("Password mismatch");
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    console.log("Password matched");
+
+    // Generate JWT token
+    console.log("Generating JWT token");
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET || "defaultSecretKey", // Fallback value
+      { expiresIn: "1h" }
+    );
+
+    // Set the token in a cookie
+    console.log("Setting token in cookie");
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 3600000, // 1 hour
+      })
+      .status(200)
+      .json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    console.log("Login successful");
+  } catch (error) {
+    console.error("Error during login:", error.message, error.stack);
+    res.status(500).json({ message: "Server error, please try again later" });
+  }
+};
+/* // User Login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -65,9 +131,9 @@ const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
-    }
+    } */
 
-    // Generate JWT token
+/*     // Generate JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.status(200).json({
@@ -83,7 +149,9 @@ const loginUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error, please try again later" });
   }
-};
+}; */
+
+
 
 // Get user profile
 const getUserProfile = async (req, res) => {
