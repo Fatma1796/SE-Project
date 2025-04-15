@@ -4,7 +4,7 @@ const {
   loginUser, 
   getUserProfile, 
   updateUserProfile, 
-  forgotOrResetPassword // Keep this line
+  forgetPassword // Keep this line
 } = require("../Controllers/userController");
 const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
 
@@ -39,6 +39,13 @@ router.get("/admin-dashboard", authenticateUser, authorizeRoles("System Admin"),
 router.get("/organizer-dashboard", authenticateUser, authorizeRoles("Organizer", "System Admin"), (req, res) => {
   res.status(200).json({ message: "Welcome to the organizer dashboard" });
 });
+
+// Forgot password
+router.put("/forgetPassword", forgetPassword);
+// router.put("/forgetPassword", (req, res, next) => {
+//   console.log("Request received at /forgetPassword");
+//   next();
+// }, forgetPassword);
 
 // User profile (accessible to all logged-in users)
 // router.get("/profile", authenticateUser, (req, res) => {

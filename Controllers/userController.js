@@ -191,4 +191,44 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile };
+// Forgoted password
+
+const forgetPassword = async (req, res) => {
+  console.log("forgetPassword function triggered");
+  const { email, newPassword } = req.body;
+
+  try {
+    console.log("Validating input");
+    if (!email || !newPassword) {
+      console.log("Validation failed: Missing email or newPassword");
+      return res.status(400).json({ message: "Email and new password are required" });
+    }
+
+    console.log("Checking if user exists");
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("Hashing new password");
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    console.log("Updating user password");
+    user.password = hashedPassword;
+
+    try {
+      await user.save();
+      console.log("Password updated successfully");
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (saveError) {
+      console.error("Error saving updated password:", saveError.message);
+      return res.status(500).json({ message: "Failed to update password, please try again later" });
+    }
+  } catch (error) {
+    console.error("Error in forgetPassword:", error.message, error.stack);
+    res.status(500).json({ message: "Server error, please try again later" });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile , forgetPassword};
