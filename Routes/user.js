@@ -1,6 +1,12 @@
 const express = require("express");
-const { registerUser, loginUser, getUserProfile, updateUserProfile } = require("../Controllers/userController");
-const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware"); // Corrected path
+const { 
+  registerUser, 
+  loginUser, 
+  getUserProfile, 
+  updateUserProfile, 
+  forgotOrResetPassword // Keep this line
+} = require("../Controllers/userController");
+const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
 
 const router = express.Router();
 
@@ -9,6 +15,9 @@ router.post("/register", registerUser);
 
 // User login
 router.post("/login", loginUser);
+
+// Forgot password
+router.route("/forgetPassword").post(forgotOrResetPassword).put(forgotOrResetPassword);
 
 // Get user profile (requires authentication)
 router.get("/profile", authenticateUser, getUserProfile);
