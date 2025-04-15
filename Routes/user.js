@@ -17,7 +17,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 // Forgot password
-router.route("/forgetPassword").post(forgotOrResetPassword).put(forgotOrResetPassword);
+//router.route("/forgetPassword").post(forgotOrResetPassword).put(forgotOrResetPassword);
 
 // Get user profile (requires authentication)
 router.get("/profile", authenticateUser, getUserProfile);
