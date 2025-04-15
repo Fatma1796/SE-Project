@@ -6,49 +6,43 @@ const User = require('../Models/User');
 
 // User Registration
 const registerUser = async (req, res) => {
-  
+  console.log("registerUser function triggered");
+  console.log("Request body:", req.body);
 
   try {
-    console.log("inside registerUser");
     const { name, email, password, role } = req.body;
+
     // Check if user already exists
-    console.log("before checking user exists");
+    console.log("Checking if user exists");
     const userExists = await User.findOne({ email });
-    console.log("after checking user exists");
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     // Hash password before saving
+    console.log("Hashing password");
     const hashedPassword = await bcrypt.hash(password, 10);
-console.log("password hashed");
+
     // Create new user
+    console.log("Creating new user");
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
       role,
     });
-console.log("before saving user");
-    await newUser.save();
-console.log("user saved");
-    // Generate JWT token
-    //const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.status(201).json({
-      message: "User registered successfully"
-      // token,
-      // user: {
-      //   id: newUser._id,
-      //   name: newUser.name,
-      //   email: newUser.email,
-      //   role: newUser.role,
-      // },
-    });
+    console.log("Saving new user");
+await newUser.save(); // Save the user to the database
+res.status(201).json({
+  message: "User registered successfully",
+});
+
   } catch (error) {
+    console.error("Error in registerUser:", error.message, error.stack);
     res.status(500).json({ message: "Server error, please try again later" });
   }
-};
+};;
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 

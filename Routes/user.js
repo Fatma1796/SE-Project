@@ -12,6 +12,11 @@ const router = express.Router();
 
 // User registration
 router.post("/register", registerUser);
+// Test route for debugging
+// router.post("/register", (req, res) => {
+//   console.log("Request received at /register");
+//   res.status(200).json({ message: "Test route working" });
+// });
 
 // User login
 router.post("/login", loginUser);
@@ -36,8 +41,8 @@ router.get("/organizer-dashboard", authenticateUser, authorizeRoles("Organizer",
 });
 
 // User profile (accessible to all logged-in users)
-router.get("/profile", authenticateUser, (req, res) => {
-  res.status(200).json(req.user);
-});
+// router.get("/profile", authenticateUser, (req, res) => {
+//   res.status(200).json(req.user);
+// });
 
 module.exports = router;
