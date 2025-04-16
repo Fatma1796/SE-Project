@@ -169,6 +169,11 @@ const updateUserProfile = async (req, res) => {
   const user = req.user; // The user is added by the authenticateUser middleware
 
   try {
+    // Validate input
+    if (!name && !email && !profilePicture) {
+      return res.status(400).json({ message: "At least one field is required to update" });
+    }
+
     // Update user profile
     if (name) user.name = name;
     if (email) user.email = email;
@@ -187,9 +192,36 @@ const updateUserProfile = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error updating profile:", error.message);
     res.status(500).json({ message: "Unable to update profile, please try again later" });
   }
 };
+// const updateUserProfile = async (req, res) => {
+//   const { name, email, profilePicture } = req.body;
+//   const user = req.user; // The user is added by the authenticateUser middleware
+
+//   try {
+//     // Update user profile
+//     if (name) user.name = name;
+//     if (email) user.email = email;
+//     if (profilePicture) user.profilePicture = profilePicture;
+
+//     // Save the updated user
+//     await user.save();
+
+//     res.status(200).json({
+//       message: "Profile updated successfully",
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         profilePicture: user.profilePicture,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: "Unable to update profile, please try again later" });
+//   }
+// };
 
 // Forgoted password
 
