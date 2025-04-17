@@ -39,7 +39,7 @@ exports.createEvent = async (req, res) => {
       totalTickets,
       remainingTickets: remainingTickets || totalTickets,
       organizer: req.user._id,
-      status: "pending"
+      status: "approved"
     });
 
     await event.save();
