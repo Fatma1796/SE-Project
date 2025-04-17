@@ -14,6 +14,5 @@ router.delete("/:id", authenticateUser, cancelBooking);
 router.get("/", authenticateUser, getUserBookings); 
 
 router.post("/", authenticateUser, bookTickets); 
-router.get("/:id", authenticateUser, getBookingById); 
-
+router.get("/users/bookings", authenticateUser, getUserBookings);
 module.exports = router;

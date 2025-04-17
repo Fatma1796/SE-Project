@@ -28,13 +28,18 @@ const cancelBooking = async (req, res) => {
   // Get all bookings for the current user
   const getUserBookings = async (req, res) => {
     try {
-      const bookings = await Booking.find({ userId: req.user.id }).populate("eventId");
+      console.log("Authenticated user ID:", req.user.id);
+  
+      const bookings = await Booking.find({ user: req.user.id }).populate("event");
+      console.log("User bookings:", bookings);
+  
       if (!bookings || bookings.length === 0) {
         return res.status(404).json({ message: "No bookings found for this user" });
       }
   
       res.status(200).json(bookings);
     } catch (error) {
+      console.error("Error in getUserBookings:", error.message);
       res.status(500).json({ message: error.message || "An error occurred while fetching bookings" });
     }
   };
