@@ -43,6 +43,8 @@ res.status(201).json({
     res.status(500).json({ message: "Server error, please try again later" });
   }
 };;
+
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -110,6 +112,8 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error, please try again later" });
   }
 };
+
+
 /* // User Login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -196,6 +200,27 @@ const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Unable to update profile, please try again later" });
   }
 };
+
+
+const getAllUsers = async (req, res) => {
+  try {
+    console.log("Fetching all users");
+
+    // Fetch all users from the database
+    const users = await User.find({}, "-password"); // Exclude the password field for security
+    console.log("Users fetched successfully:", users);
+
+    res.status(200).json({
+      message: "Users fetched successfully",
+      users,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error.message, error.stack);
+    res.status(500).json({ message: "Failed to fetch users, please try again later" });
+  }
+};
+
+
 // const updateUserProfile = async (req, res) => {
 //   const { name, email, profilePicture } = req.body;
 //   const user = req.user; // The user is added by the authenticateUser middleware
@@ -263,4 +288,10 @@ const forgetPassword = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile , forgetPassword};
+module.exports = { 
+  registerUser,
+  loginUser,
+  getUserProfile,
+  updateUserProfile,
+  forgetPassword, 
+  getAllUsers};
