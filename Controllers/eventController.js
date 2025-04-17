@@ -25,16 +25,19 @@ exports.getEventById = async (req, res) => {
 // Organizer: Create event
 exports.createEvent = async (req, res) => {
   try {
-    const { title, description, date, location, tickets, price } = req.body;
+    console.log("Authenticated user:", req.user);
+    const { title, description, eventDate, location,category,image, ticketPrice, totalTickets ,remainingTickets} = req.body;
 
     const event = new Event({
       title,
       description,
-      date,
+      eventDate,
       location,
-      tickets,
-      availableTickets: tickets,
-      price,
+      category,
+      image,
+      ticketPrice,
+      totalTickets,
+      remainingTickets: remainingTickets || totalTickets,
       organizer: req.user._id,
       status: "pending"
     });
@@ -42,6 +45,8 @@ exports.createEvent = async (req, res) => {
     await event.save();
     res.status(201).json(event);
   } catch (err) {
+    console.error("Error in createEvent:", err); // Log the actual error
+
     res.status(500).json({ message: "Server error" });
   }
 };

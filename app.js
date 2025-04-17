@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser=require('cookie-parser')
 const cors = require("cors");
-
+const eventRouter = require("./Routes/Event");
 const app = express();
 
 const userRouter = require("./Routes/user");
@@ -38,7 +38,7 @@ app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) =
     res.send("Welcome, Admin!");
 });
 
-
+app.use("/api/v1/events", eventRouter);
 //app.use("/api/v1", authRouter);  // commented out the authRouter, try before uncommenting
 //app.use(authenticationMiddleware);
 //app.use("/api/v1/users", userRouter);
