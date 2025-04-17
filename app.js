@@ -4,6 +4,7 @@ const cookieParser=require('cookie-parser')
 const cors = require("cors");
 const eventRouter = require("./Routes/Event");
 const app = express();
+const bookingRouter = require("./Routes/booking");
 
 const userRouter = require("./Routes/user");
 const { authenticateUser, authorizeRoles } = require('./Middleware/authenticationMiddleware');
@@ -37,6 +38,8 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) => {
     res.send("Welcome, Admin!");
 });
+
+app.use("/api/v1/bookings", bookingRouter);
 
 app.use("/api/v1/events", eventRouter);
 //app.use("/api/v1", authRouter);  // commented out the authRouter, try before uncommenting

@@ -5,7 +5,9 @@ const {
   getUserProfile, 
   updateUserProfile, 
   forgetPassword,
-  getAllUsers
+  getAllUsers,
+  updateUserRole,
+  deleteUser
 } = require("../Controllers/userController");
 const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
 
@@ -57,5 +59,19 @@ router.put("/forgetPassword", forgetPassword);
 // router.get("/profile", authenticateUser, (req, res) => {
 //   res.status(200).json(req.user);
 // });
+
+const { getSingleUser } = require("../Controllers/userController"); // Add this to your import
+
+// Get single user (admin only)
+router.get("/:id", authenticateUser, authorizeRoles("System Admin"), getSingleUser);
+
+
+// update user role (admin only)
+router.put("/:id", authenticateUser, authorizeRoles("System Admin"), updateUserRole);
+
+
+//deleting a user (admin only)
+router.delete("/:id", authenticateUser, authorizeRoles("System Admin"), deleteUser);
+
 
 module.exports = router;
