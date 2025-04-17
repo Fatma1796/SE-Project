@@ -134,7 +134,7 @@ const bookTickets = async (req, res) => {
 // Get booking details by ID
 const getBookingById = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id).populate("eventId");
+    const booking = await Booking.findById(req.params.id).populate("event"); // Use "event" instead of "eventId"
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
     }
