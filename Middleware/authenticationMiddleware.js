@@ -4,23 +4,34 @@ const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
 
 // Authenticate user
-const authenticateUser = async (req, res, next) => {
+// exports.authenticateUser = async (req, res, next) => {
+//   try {
+//     const token = req.header("Authorization")?.replace("Bearer ", "");
+//     if (!token) {
+//       return res.status(401).json({ message: "Authorization token required" });
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const user = await User.findById(decoded.id);
+//     if (!user) {
+//       return res.status(401).json({ message: "User not found" });
+//     }
+
+//     req.user = user;
+//     next();
+//   } catch (error) {
+//     res.status(401).json({ message: "Invalid or expired token" });
+//   }
+// };
+ const authenticateUser = (req, res, next) => {
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
-    if (!token) {
-      return res.status(401).json({ message: "Authorization token required" });
-    }
-
+    const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
-    }
-
-    req.user = user;
+    req.user = decoded; // Ensure the user object is populated with the role
+    console.log("Authenticated user:", req.user); // Debugging log
     next();
-  } catch (error) {
-    res.status(401).json({ message: "Invalid or expired token" });
+  } catch (err) {
+    res.status(401).json({ message: "Authentication failed" });
   }
 };
 

@@ -1,16 +1,35 @@
 const Event = require("../Models/Event");
 const Booking = require("../Models/Booking");
+// module.exports = {
+//   getAllEvents,
+//   getEventById,
+//   createEvent,
+//   updateEvent,
+//   deleteEvent,
+//   getEventAnalytics,
+//   updateEventStatus,
+// };
 
 // Get all approved events (public)
+// exports.getAllEvents = async (req, res) => {
+//   try {
+//     const events = await Event.find({ status: "confirmed" });
+//     res.status(200).json(events);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 exports.getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" });
+    console.log("Fetching events from database...");
+    const events = await Event.find({ status: "approved" }); // Fetch only approved events
+    console.log("Fetched events:", events); // Log the fetched events
     res.status(200).json(events);
   } catch (err) {
+    console.error("Error in getAllEvents:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 // Get event by ID (public)
 exports.getEventById = async (req, res) => {
   try {
@@ -39,7 +58,7 @@ exports.createEvent = async (req, res) => {
       totalTickets,
       remainingTickets: remainingTickets || totalTickets,
       organizer: req.user._id,
-      status: "pending"
+      status: "approved"
     });
 
     await event.save();
@@ -51,51 +70,117 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-// Organizer: Update event (tickets, date, location)
+
+// exports.updateEvent = async (req, res) => {
+//   try {
+//     const event = await Event.findById(req.params.id);
+//     if (!event) {
+//       return res.status(404).json({ message: "Event not found" });
+//     }
+
+//     // Check if the user is an organizer or admin
+//     if (req.user.role !== "Organizer" && req.user.role !== "System admin") {
+//       return res.status(403).json({ message: "You do not have permission to update this event" });
+//     }
+
+//     // Allowed fields for update based on the schema
+//     const allowedFields = [
+//       "title",
+//       "description",
+//       "eventDate",
+//       "location",
+//       "category",
+//       "image",
+//       "ticketPrice",
+//       "totalTickets",
+//       "remainingTickets",
+//       "status"
+//     ];
+
+//     // Update only the allowed fields
+//     for (const field of allowedFields) {
+//       if (req.body[field] !== undefined) {
+//         event[field] = req.body[field];
+//       }
+//     }
+
+//     // Save the updated event
+//     const updatedEvent = await event.save();
+//     res.status(200).json(updatedEvent);
+//   } catch (err) {
+//     console.error("Error in updateEvent:", err); // Log the error for debugging
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 exports.updateEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) return res.status(404).json({ message: "Event not found" });
-
-    if (event.organizer.toString() !== req.user._id) {
-      return res.status(403).json({ message: "You can only update your own events" });
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
     }
 
-    const allowedFields = ["tickets", "date", "location"];
-    allowedFields.forEach((field) => {
+    // Debugging: Log the user's role
+    console.log("User role:", req.user.role);
+
+    // Check if the user is an organizer or admin
+    if (req.user.role !== "Organizer" && req.user.role !== "System Admin") {
+      return res.status(403).json({ message: "You do not have permission to update this event" });
+    }
+
+    // Allowed fields for update based on the schema
+    const allowedFields = [
+      "title",
+      "description",
+      "eventDate",
+      "location",
+      "category",
+      "image",
+      "ticketPrice",
+      "totalTickets",
+      "remainingTickets",
+      "status"
+    ];
+
+    // Update only the allowed fields
+    for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
-        if (field === "tickets") {
-          const diff = req.body.tickets - event.tickets;
-          event.availableTickets += diff;
-        }
         event[field] = req.body[field];
       }
-    });
+    }
 
-    await event.save();
-    res.status(200).json(event);
+    // Save the updated event
+    const updatedEvent = await event.save();
+    res.status(200).json(updatedEvent);
   } catch (err) {
+    console.error("Error in updateEvent:", err); // Log the error for debugging
     res.status(500).json({ message: "Server error" });
   }
+
 };
 
-// Organizer: Delete event
+
 exports.deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) return res.status(404).json({ message: "Event not found" });
-
-    if (event.organizer.toString() !== req.user._id) {
-      return res.status(403).json({ message: "You can only delete your own events" });
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
     }
 
+    // Check if the user is an organizer or admin
+    if (req.user.role !== "Organizer" && req.user.role !== "System Admin") {
+      return res.status(403).json({ message: "You do not have permission to delete this event" });
+    }
+
+    // Delete the event
     await event.deleteOne();
-    res.status(200).json({ message: "Event deleted" });
+    res.status(200).json({ message: "Event deleted successfully" });
   } catch (err) {
+    console.error("Error in deleteEvent:", err); // Log the error for debugging
     res.status(500).json({ message: "Server error" });
   }
 };
-
+   
 // Admin: Approve or reject event
 exports.updateEventStatus = async (req, res) => {
   try {

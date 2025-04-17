@@ -51,8 +51,7 @@ router.get("/:id", getEventById); // Get event by ID
 
 // Organizer-only routes
 router.post("/", authenticateUser, authorizeRoles("Organizer"), createEvent); // Create a new event
-router.put("/:id", authenticateUser, authorizeRoles("Organizer"), updateEvent); // Update an event
-router.delete("/:id", authenticateUser, authorizeRoles("Organizer"), deleteEvent); // Delete an event
+
 router.get(
   "/organizer/analytics",
   authenticateUser,
@@ -67,5 +66,7 @@ router.put(
   authorizeRoles("System Admin"),
   updateEventStatus
 ); // Approve or reject an event
-
+//both organizer and admin  
+router.put("/:id", authenticateUser, authorizeRoles("Organizer", "System Admin"), updateEvent); // Update an event
+router.delete("/:id", authenticateUser, authorizeRoles("Organizer", "System Admin"), deleteEvent); // Delete an event
 module.exports = router; // Export the router
