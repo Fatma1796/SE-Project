@@ -43,7 +43,7 @@ The system uses MongoDB to store data. The three primary schemas for the project
    - Description: Stores event details and tracks ticket availability.
 
 3. **Booking Schema**:
-   - Fields: user, event, number of tickets, total price, booking status (pending, confirmed, or canceled), and timestamp.
+   - Fields: user, event, number of tickets, total price, booking status (pending, approved, or canceled), and timestamp.
    - Description: Records ticket bookings made by users and links them to events.
 
 
