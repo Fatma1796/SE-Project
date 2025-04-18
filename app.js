@@ -41,6 +41,7 @@ app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) =
 
 app.use("/api/v1/bookings", bookingRouter);
 
+app.use("/api/v1", eventRouter);
 app.use("/api/v1/events", eventRouter);
 //app.use("/api/v1", authRouter);  // commented out the authRouter, try before uncommenting
 //app.use(authenticationMiddleware);
