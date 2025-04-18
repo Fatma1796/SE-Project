@@ -11,7 +11,6 @@ const EventSchema = new mongoose.Schema({
     totalTickets: { type: Number, required: true, min: 0 },
     remainingTickets: { type: Number, required: true, min: 0 },
     organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, //reference (ObjectId) to the User model
-    status: { type: String, enum: ['approved', 'pending', 'declined'], default: "approved" }, //status of the event
     
     status: { type: String, enum: ['approved', 'pending', 'declined'], default: "pending" }, //status of the event
     
