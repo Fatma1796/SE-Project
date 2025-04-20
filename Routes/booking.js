@@ -15,4 +15,5 @@ router.get("/", authenticateUser, getUserBookings);
 
 router.post("/", authenticateUser, bookTickets); 
 router.get("/users/bookings", authenticateUser, getUserBookings);
+router.get("/:id", authenticateUser, getBookingById);
 module.exports = router;

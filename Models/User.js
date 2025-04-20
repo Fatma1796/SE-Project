@@ -23,8 +23,11 @@ const userSchema = new mongoose.Schema(
       enum: ["Standard User", "Organizer", "System Admin"],
       required: true,
     },
+
+   lastLogin: { type: Date }
   },
   { timestamps: true } // Automatically adds "createdAt" and "updatedAt"
+
 );
 
 module.exports = mongoose.model("User", userSchema);

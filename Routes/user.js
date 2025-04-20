@@ -7,6 +7,7 @@ const {
   forgetPassword,
   getAllUsers,
   updateUserRole,
+  getEventsForCurrentUser,
   deleteUser
 } = require("../Controllers/userController");
 const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
@@ -73,5 +74,11 @@ router.put("/:id", authenticateUser, authorizeRoles("System Admin"), updateUserR
 //deleting a user (admin only)
 router.delete("/:id", authenticateUser, authorizeRoles("System Admin"), deleteUser);
 
+router.get(
+  '/events', (req, res, next) => {
+    console.log("Route '/users/events' hit");next(); }, authenticateUser, // Authenticate the user
+ authorizeRoles("Organizer"), // Authorize the user as Organizer
+  getEventsForCurrentUser ,// Controller function
+);
 
 module.exports = router;

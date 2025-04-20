@@ -79,6 +79,10 @@ const loginUser = async (req, res) => {
     }
     console.log("Password matched");
 
+    console.log("Updating lastLogin field for user");
+    user.lastLogin = new Date();
+    await user.save();
+
     // Generate JWT token
     console.log("Generating JWT token");
     const token = jwt.sign(
@@ -398,6 +402,67 @@ const deleteUser = async (req, res) => {
 //   }
 // };
 
+const getEventsForCurrentUser = async (req, res) => {
+  console.log("Inside getEventsForCurrentUser"); // This should print when the route is hit
+  try {
+    console.log("Authenticated user:", req.user); // Log authenticated user to check the _id
+
+    // Check if the user is authenticated and has an ID
+    if (!req.user || !req.user._id) {
+      return res.status(400).json({ message: "User authentication failed or missing user ID" });
+    }
+
+    // Ensure the logged-in user is an organizer
+    if (req.user.role !== "Organizer") {
+      return res.status(403).json({ message: "Access denied. Only organizers can access this resource." });
+    }
+
+    console.log("Authenticated Organizer ID:", req.user._id); // Log the organizer's ID
+
+    // Find the last logged-in Standard User
+    const lastLoggedInUser = await User.findOne({ role: "Standard User" }).sort({ lastLogin:-1 });
+    console.log("Last Logged In User:", lastLoggedInUser); // Log the last logged-in user
+
+    if (!lastLoggedInUser) {
+      return res.status(404).json({ message: "No standard users found" });
+    }
+
+    const userId = lastLoggedInUser._id; // Get the last logged-in user's ID
+    console.log("Last Logged In User ID:", userId); // Log the userId being used
+
+    // Get all bookings for the specified Standard User
+    const bookings = await Booking.find({ user: userId }).populate("event");
+    console.log("Bookings:", bookings); // Log the bookings found for the user
+
+    if (bookings.length === 0) {
+      return res.status(404).json({ message: "No events found for this user" });
+    }
+
+    // Prepare event data for all bookings
+    const eventData = bookings.map(booking => {
+      const event = booking.event;
+      return {
+        eventId: event._id,
+        title: event.title,
+        description: event.description,
+        eventDate: event.eventDate,
+        location: event.location,
+        category: event.category,
+        totalTickets: event.totalTickets,
+        remainingTickets: event.remainingTickets,
+        status: event.status,
+        organizer: event.organizer // Include the organizer of the event
+      };
+    });
+
+    console.log("Event Data:", eventData); // Log the event data
+
+    res.status(200).json({ events: eventData });
+  } catch (error) {
+    console.error("Error in getEventsForCurrentUser:", error.message);
+    res.status(500).json({ message: "Failed to get events for the current user" });
+  }
+};
 
 
 module.exports = { 
@@ -409,4 +474,5 @@ module.exports = {
   getAllUsers,
   getSingleUser,
   updateUserRole,
-  deleteUser};
+  getEventsForCurrentUser,
+deleteUser};
