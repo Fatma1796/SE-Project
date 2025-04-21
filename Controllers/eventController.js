@@ -28,6 +28,46 @@ exports.getEventById = async (req, res) => {
   }
 };
 
+// exports.createEvent = async (req, res) => {
+//   try {
+//     console.log("Authenticated user:", req.user);  // Log authenticated user to check the _id
+
+//     if (!req.user || !req.user._id) {
+//       return res.status(400).json({ message: "User authentication failed or missing user ID" });
+//     }
+
+//     const { title, description, eventDate, location, category, image, ticketPrice, totalTickets, remainingTickets } = req.body;
+
+//     if (!title || !description || !eventDate || !location || !category || !ticketPrice || !totalTickets) {
+//       return res.status(400).json({ message: "Missing required fields" });
+//     }
+
+//     const event = new Event({
+//       title,
+//       description,
+//       eventDate,
+//       location,
+//       category,
+//       image,
+//       ticketPrice,
+//       totalTickets,
+//       remainingTickets: remainingTickets || totalTickets,
+//       organizer: req.user._id,  // Attach the organizer from the authenticated user
+//       status: "pending"
+//     });
+
+//     await event.save();
+//     res.status(201).json(event);
+
+//   } catch (err) {
+//     console.error("Error in createEvent:", err.message);
+//     console.error("Stack trace:", err.stack);
+
+//     res.status(500).json({ message: "Server error", error: err.message });
+//   }
+// };
+
+
 exports.createEvent = async (req, res) => {
   try {
     console.log("Authenticated user:", req.user);  // Log authenticated user to check the _id
@@ -36,7 +76,26 @@ exports.createEvent = async (req, res) => {
       return res.status(400).json({ message: "User authentication failed or missing user ID" });
     }
 
-    const { title, description, eventDate, location, category, image, ticketPrice, totalTickets, remainingTickets } = req.body;
+    // Destructure allowed fields, collect extra ones
+    const {
+      title,
+      description,
+      eventDate,
+      location,
+      category,
+      image,
+      ticketPrice,
+      totalTickets,
+      remainingTickets,
+      ...extraFields
+    } = req.body;
+
+    // If any extra fields exist, reject the request
+    if (Object.keys(extraFields).length > 0) {
+      return res.status(400).json({
+        message: `Unexpected fields provided: ${Object.keys(extraFields).join(", ")}`
+      });
+    }
 
     if (!title || !description || !eventDate || !location || !category || !ticketPrice || !totalTickets) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -66,8 +125,6 @@ exports.createEvent = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
-
-
 
 
 exports.updateEvent = async (req, res) => {
