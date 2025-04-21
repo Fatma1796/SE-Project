@@ -2,10 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser=require('cookie-parser')
 const cors = require("cors");
-const eventRouter = require("./Routes/Event");
-const app = express();
-const bookingRouter = require("./Routes/booking");
 
+const app = express();
+
+const eventRouter = require("./Routes/event");
+const bookingRouter = require("./Routes/booking");
 const userRouter = require("./Routes/user");
 const { authenticateUser, authorizeRoles } = require('./Middleware/authenticationMiddleware');
 //fixed the path of authenticationMiddleware to use relative path
@@ -32,17 +33,24 @@ app.use(
 
 // used authenticationMiddleware as we do not have route/auth
 // // Protect all /api/v1/users routes with authentication middleware
-app.use("/api/v1/users", userRouter);
 
-// Example admin route with role-based access control
+
+/*// Example admin route with role-based access control
 app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) => {
     res.send("Welcome, Admin!");
 });
+*/
+
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1", userRouter);
 
 app.use("/api/v1/bookings", bookingRouter);
+app.use("/api/v1", bookingRouter);
 
 app.use("/api/v1", eventRouter);
 app.use("/api/v1/events", eventRouter);
+
+
 //app.use("/api/v1", authRouter);  // commented out the authRouter, try before uncommenting
 //app.use(authenticationMiddleware);
 //app.use("/api/v1/users", userRouter);

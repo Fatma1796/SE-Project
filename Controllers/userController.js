@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require('../Models/User');
+const Booking = require("../Models/Booking");
+
 //changed the path of User to use relative path
 //const User = require("C:\Users\My Lap\Documents\sem 4\Software Engneering\SE-Project\Models\User.js");
 
@@ -11,6 +13,18 @@ const registerUser = async (req, res) => {
 
   try {
     const { name, email, password, role } = req.body;
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return res.status(400).json({ message: "Invalid email address" });
+        }
+    
+        // Validate role
+        const allowedRoles = ["Standard User", "Organizer", "System Admin"];
+        if (!allowedRoles.includes(role)) {
+          return res.status(400).json({ message: `Invalid role. Allowed roles are: ${allowedRoles.join(", ")}` });
+        }
 
     // Check if user already exists
     console.log("Checking if user exists");
@@ -43,6 +57,8 @@ res.status(201).json({
     res.status(500).json({ message: "Server error, please try again later" });
   }
 };;
+
+
 
 
 const loginUser = async (req, res) => {
@@ -464,6 +480,26 @@ const getEventsForCurrentUser = async (req, res) => {
   }
 };
 
+// Get current user's bookings
+const getCurrentUserBookings = async (req, res) => {
+  try {
+    console.log("Authenticated user ID:", req.user._id); // Debugging log
+    console.log("Authenticated user role:", req.user.role); // Debugging log
+
+    const bookings = await Booking.find({ user: req.user._id }).populate("event");
+    console.log("User bookings:", bookings); // Debugging log
+
+    if (!bookings || bookings.length === 0) {
+      return res.status(404).json({ message: "No bookings found for this user" });
+    }
+
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error("Error in getCurrentUserBookings:", error.message);
+    res.status(500).json({ message: error.message || "An error occurred while fetching bookings" });
+  }
+};
+
 
 module.exports = { 
   registerUser,
@@ -475,4 +511,6 @@ module.exports = {
   getSingleUser,
   updateUserRole,
   getEventsForCurrentUser,
-deleteUser};
+deleteUser,
+getCurrentUserBookings,
+};

@@ -6,9 +6,12 @@ const {
   updateUserProfile, 
   forgetPassword,
   getAllUsers,
+ 
   updateUserRole,
   getEventsForCurrentUser,
-  deleteUser
+  deleteUser,
+  getCurrentUserBookings,
+  getSingleUser,
 } = require("../Controllers/userController");
 const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
 
@@ -50,6 +53,16 @@ router.get("/", authenticateUser, authorizeRoles("System Admin"), getAllUsers);
 // Forgot password
 router.put("/forgetPassword", forgetPassword);
 
+router.get(
+  '/events', (req, res, next) => {
+    console.log("Route '/users/events' hit");next(); }, authenticateUser, // Authenticate the user
+ authorizeRoles("Organizer"), // Authorize the user as Organizer
+  getEventsForCurrentUser ,// Controller function
+);
+
+
+router.get("/bookings", authenticateUser, getCurrentUserBookings);
+
 
 // router.put("/forgetPassword", (req, res, next) => {
 //   console.log("Request received at /forgetPassword");
@@ -61,7 +74,7 @@ router.put("/forgetPassword", forgetPassword);
 //   res.status(200).json(req.user);
 // });
 
-const { getSingleUser } = require("../Controllers/userController"); // Add this to your import
+//const { getSingleUser } = require("../Controllers/userController"); // Add this to your import
 
 // Get single user (admin only)
 router.get("/:id", authenticateUser, authorizeRoles("System Admin"), getSingleUser);
@@ -74,11 +87,13 @@ router.put("/:id", authenticateUser, authorizeRoles("System Admin"), updateUserR
 //deleting a user (admin only)
 router.delete("/:id", authenticateUser, authorizeRoles("System Admin"), deleteUser);
 
-router.get(
-  '/events', (req, res, next) => {
-    console.log("Route '/users/events' hit");next(); }, authenticateUser, // Authenticate the user
- authorizeRoles("Organizer"), // Authorize the user as Organizer
-  getEventsForCurrentUser ,// Controller function
-);
+// router.get(
+//   '/events', (req, res, next) => {
+//     console.log("Route '/users/events' hit");next(); }, authenticateUser, // Authenticate the user
+//  authorizeRoles("Organizer"), // Authorize the user as Organizer
+//   getEventsForCurrentUser ,// Controller function
+// );
+
+
 
 module.exports = router;
