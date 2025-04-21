@@ -3,11 +3,14 @@ const jwt = require("jsonwebtoken");
 const User = require('../Models/User');
 const Booking = require("../Models/Booking");
 const Event = require("../Models/Event");
+const crypto = require("crypto");
+
 
 //changed the path of User to use relative path
 //const User = require("C:\Users\My Lap\Documents\sem 4\Software Engneering\SE-Project\Models\User.js");
 
 // User Registration
+
 const registerUser = async (req, res) => {
   console.log("registerUser function triggered");
   console.log("Request body:", req.body);
@@ -15,17 +18,25 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          return res.status(400).json({ message: "Invalid email address" });
-        }
+    // Manually check for extra attributes
+    const allowedAttributes = ['name', 'email', 'password', 'role'];
+    const extraAttributes = Object.keys(req.body).filter(key => !allowedAttributes.includes(key));
     
-        // Validate role
-        const allowedRoles = ["Standard User", "Organizer", "System Admin"];
-        if (!allowedRoles.includes(role)) {
-          return res.status(400).json({ message: `Invalid role. Allowed roles are: ${allowedRoles.join(", ")}` });
-        }
+    if (extraAttributes.length > 0) {
+      return res.status(400).json({ message: `Invalid attributes: ${extraAttributes.join(', ')}` });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email address" });
+    }
+    
+    // Validate role
+    const allowedRoles = ["Standard User", "Organizer", "System Admin"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({ message: `Invalid role. Allowed roles are: ${allowedRoles.join(", ")}` });
+    }
 
     // Check if user already exists
     console.log("Checking if user exists");
@@ -48,22 +59,79 @@ const registerUser = async (req, res) => {
     });
 
     console.log("Saving new user");
-await newUser.save(); // Save the user to the database
-res.status(201).json({
-  message: "User registered successfully",
-});
-
+    await newUser.save(); // Save the user to the database
+    res.status(201).json({
+      message: "User registered successfully",
+    });
   } catch (error) {
     console.error("Error in registerUser:", error.message, error.stack);
     res.status(500).json({ message: "Server error, please try again later" });
   }
-};;
+};
 
+// const registerUser = async (req, res) => {
+//   console.log("registerUser function triggered");
+//   console.log("Request body:", req.body);
 
+//   try {
+//     const { name, email, password, role } = req.body;
+
+//         // Validate email format
+//         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//         if (!emailRegex.test(email)) {
+//           return res.status(400).json({ message: "Invalid email address" });
+//         }
+    
+//         // Validate role
+//         const allowedRoles = ["Standard User", "Organizer", "System Admin"];
+//         if (!allowedRoles.includes(role)) {
+//           return res.status(400).json({ message: `Invalid role. Allowed roles are: ${allowedRoles.join(", ")}` });
+//         }
+
+//     // Check if user already exists
+//     console.log("Checking if user exists");
+//     const userExists = await User.findOne({ email });
+//     if (userExists) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     // Hash password before saving
+//     console.log("Hashing password");
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Create new user
+//     console.log("Creating new user");
+//     const newUser = new User({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       role,
+//     });
+
+//     console.log("Saving new user");
+// await newUser.save(); // Save the user to the database
+// res.status(201).json({
+//   message: "User registered successfully",
+// });
+
+//   } catch (error) {
+//     console.error("Error in registerUser:", error.message, error.stack);
+//     res.status(500).json({ message: "Server error, please try again later" });
+//   }
+// };;
 
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+
+  // 🚨 Check for unexpected fields
+  const allowedFields = ['email', 'password'];
+  const extraFields = Object.keys(req.body).filter(key => !allowedFields.includes(key));
+  if (extraFields.length > 0) {
+    return res.status(400).json({
+      message: `Unexpected field(s): ${extraFields.join(", ")}`,
+    });
+  }
 
   try {
     console.log("Inside loginUser function");
@@ -74,48 +142,40 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // Find the user by email
+    // Find user by email
     console.log("Finding user by email:", email);
     const user = await User.findOne({ email });
     if (!user) {
       console.log("User not found");
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    console.log("User found:", user);
 
     // Compare passwords
     console.log("Comparing passwords");
-    if (!password || !user.password) {
-      console.error("Password or user password is missing");
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       console.log("Password mismatch");
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    console.log("Password matched");
 
-    console.log("Updating lastLogin field for user");
+    // Update lastLogin
     user.lastLogin = new Date();
     await user.save();
 
-    // Generate JWT token
-    console.log("Generating JWT token");
+    // Generate JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET || "defaultSecretKey", // Fallback value
+      process.env.JWT_SECRET || "defaultSecretKey",
       { expiresIn: "1h" }
     );
 
-    // Set the token in a cookie
-    console.log("Setting token in cookie");
+    // Set token in cookie
     res
       .cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 3600000, // 1 hour
+        maxAge: 3600000,
       })
       .status(200)
       .json({
@@ -127,12 +187,87 @@ const loginUser = async (req, res) => {
           role: user.role,
         },
       });
-    console.log("Login successful");
+
   } catch (error) {
     console.error("Error during login:", error.message, error.stack);
     res.status(500).json({ message: "Server error, please try again later" });
   }
 };
+
+
+
+
+// const loginUser = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+//     console.log("Inside loginUser function");
+
+//     // Validate input
+//     if (!email || !password) {
+//       console.error("Email or password is missing");
+//       return res.status(400).json({ message: "Email and password are required" });
+//     }
+
+//     // Find the user by email
+//     console.log("Finding user by email:", email);
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       console.log("User not found");
+//       return res.status(400).json({ message: "Invalid credentials" });
+//     }
+//     console.log("User found:", user);
+
+//     // Compare passwords
+//     console.log("Comparing passwords");
+//     if (!password || !user.password) {
+//       console.error("Password or user password is missing");
+//       return res.status(400).json({ message: "Invalid credentials" });
+//     }
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       console.log("Password mismatch");
+//       return res.status(400).json({ message: "Invalid credentials" });
+//     }
+//     console.log("Password matched");
+
+//     console.log("Updating lastLogin field for user");
+//     user.lastLogin = new Date();
+//     await user.save();
+
+//     // Generate JWT token
+//     console.log("Generating JWT token");
+//     const token = jwt.sign(
+//       { id: user._id, role: user.role },
+//       process.env.JWT_SECRET || "defaultSecretKey", // Fallback value
+//       { expiresIn: "1h" }
+//     );
+
+//     // Set the token in a cookie
+//     console.log("Setting token in cookie");
+//     res
+//       .cookie("token", token, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "strict",
+//         maxAge: 3600000, // 1 hour
+//       })
+//       .status(200)
+//       .json({
+//         message: "Login successful",
+//         user: {
+//           id: user._id,
+//           name: user.name,
+//           email: user.email,
+//           role: user.role,
+//         },
+//       });
+//     console.log("Login successful");
+//   } catch (error) {
+//     console.error("Error during login:", error.message, error.stack);
+//     res.status(500).json({ message: "Server error, please try again later" });
+//   }
+// };
 
 
 /* // User Login
@@ -270,16 +405,29 @@ const getAllUsers = async (req, res) => {
 // };
 
 // Forgoted password
-
 const forgetPassword = async (req, res) => {
   console.log("forgetPassword function triggered");
-  const { email, newPassword } = req.body;
+  const { email, newPassword, otp } = req.body;
+
+  // Extra keys check
+  const allowedKeys = ["email", "newPassword", "otp"];
+  const keysInBody = Object.keys(req.body);
+  const extraKeys = keysInBody.filter((key) => !allowedKeys.includes(key));
+
+  if (extraKeys.length > 0) {
+    console.log("Unexpected fields:", extraKeys);
+    return res
+      .status(400)
+      .json({ message: `Unexpected fields: ${extraKeys.join(", ")}` });
+  }
 
   try {
     console.log("Validating input");
-    if (!email || !newPassword) {
-      console.log("Validation failed: Missing email or newPassword");
-      return res.status(400).json({ message: "Email and new password are required" });
+    if (!email) {
+      console.log("Validation failed: Missing email");
+      return res
+        .status(400)
+        .json({ message: "Email is required" });
     }
 
     console.log("Checking if user exists");
@@ -289,25 +437,95 @@ const forgetPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("Hashing new password");
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    console.log("Updating user password");
-    user.password = hashedPassword;
-
-    try {
+    if (!otp) {
+      const generatedOtp = crypto.randomInt(100000, 999999); // Generate a 6-digit OTP
+      user.otp = generatedOtp;
+      user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
       await user.save();
-      console.log("Password updated successfully");
-      res.status(200).json({ message: "Password updated successfully" });
-    } catch (saveError) {
-      console.error("Error saving updated password:", saveError.message);
-      return res.status(500).json({ message: "Failed to update password, please try again later" });
+
+      // Send OTP back in the response (for testing purposes)
+      return res.status(200).json({
+        message: "OTP generated successfully",
+        otp: generatedOtp, // Return the OTP in the response
+      });
     }
+
+    // If OTP is provided
+    if (otp) {
+      if (user.otp !== parseInt(otp)) {
+        return res.status(400).json({ message: "Invalid OTP" });
+      }
+
+      if (user.otpExpires < Date.now()) {
+        return res.status(400).json({ message: "OTP has expired" });
+      }
+
+      if (!newPassword) {
+        return res.status(400).json({ message: "New password is required" });
+      }
+
+      console.log("Hashing new password");
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      console.log("Updating user password");
+      user.password = hashedPassword;
+      user.otp = undefined;
+      user.otpExpires = undefined;
+      await user.save();
+
+      console.log("Password updated successfully");
+      return res.status(200).json({ message: "Password updated successfully" });
+    }
+
+    // Fallback in case logic goes wrong
+    return res
+      .status(400)
+      .json({ message: "Invalid request. Please provide either an email to get an OTP or a valid OTP to reset password." });
+
   } catch (error) {
     console.error("Error in forgetPassword:", error.message, error.stack);
     res.status(500).json({ message: "Server error, please try again later" });
   }
 };
+
+
+// const forgetPassword = async (req, res) => {
+//   console.log("forgetPassword function triggered");
+//   const { email, newPassword } = req.body;
+
+//   try {
+//     console.log("Validating input");
+//     if (!email || !newPassword) {
+//       console.log("Validation failed: Missing email or newPassword");
+//       return res.status(400).json({ message: "Email and new password are required" });
+//     }
+
+//     console.log("Checking if user exists");
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       console.log("User not found");
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     console.log("Hashing new password");
+//     const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+//     console.log("Updating user password");
+//     user.password = hashedPassword;
+
+//     try {
+//       await user.save();
+//       console.log("Password updated successfully");
+//       res.status(200).json({ message: "Password updated successfully" });
+//     } catch (saveError) {
+//       console.error("Error saving updated password:", saveError.message);
+//       return res.status(500).json({ message: "Failed to update password, please try again later" });
+//     }
+//   } catch (error) {
+//     console.error("Error in forgetPassword:", error.message, error.stack);
+//     res.status(500).json({ message: "Server error, please try again later" });
+//   }
+// };
 
 // the details of  asingle user 
 const getSingleUser = async (req, res) => {

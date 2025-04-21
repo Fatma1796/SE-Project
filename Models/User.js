@@ -24,9 +24,12 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-   lastLogin: { type: Date }
-  },
-  { timestamps: true } // Automatically adds "createdAt" and "updatedAt"
+   lastLogin: { type: Date },
+ 
+  
+  otp: { type: Number }, // Store the OTP
+  otpExpires: { type: Date }, // Store OTP expiration time
+   },{ timestamps: true } // Automatically adds "createdAt" and "updatedAt"
 
 );
 
