@@ -6,17 +6,17 @@ const User = require("../Models/User");
 
 
 
-exports.getAllEvents = async (req, res) => {
-  try {
-    console.log("Fetching events from database...");
-    const events = await Event.find({ status: "pending" }); // Fetch only approved events
-    console.log("Fetched events:", events); // Log the fetched events
-    res.status(200).json(events);
-  } catch (err) {
-    console.error("Error in getAllEvents:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+// exports.getAllEvents = async (req, res) => {
+//   try {
+//     console.log("Fetching events from database...");
+//     const events = await Event.find({ status: "pending" }); // Fetch only approved events
+//     console.log("Fetched events:", events); // Log the fetched events
+//     res.status(200).json(events);
+//   } catch (err) {
+//     console.error("Error in getAllEvents:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 // Get event by ID (public)
 exports.getEventById = async (req, res) => {
   try {
@@ -236,7 +236,37 @@ exports.getOrganizerEventAnalyticsForUser = async (req, res) => {
   }
 };
 
+exports.getApprovedEvents = async (req, res) => {
+  try {
+    console.log("Fetching approved events...");
+    const events = await Event.find({ status: "approved" });
+    console.log("Approved events:", events);
+    res.status(200).json(events);
+  } catch (err) {
+    console.error("Error in getApprovedEvents:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.getAllEventsForAdmin = async (req, res) => {
+  try {
+    const events = await Event.find(); // Fetch all events regardless of status
+    console.log("Fetched events:", events); // Add this line
+    res.status(200).json(events);
+  } catch (err) {
+    console.error("Error in getAllEventsForAdmin:", err); // Already here, good
+    res.status(500).json({ message: "Server error", error: err.message }); // Send error message to help debugging
+  }
+};
 
+// exports.getAllEventsForAdmin = async (req, res) => {
+//   try {
+//     const events = await Event.find(); // Fetch all events regardless of status
+//     res.status(200).json(events);
+//   } catch (err) {
+//     console.error("Error in getAllEventsForAdmin:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
   // module.exports = {
   //   getOrganizerEventAnalyticsForUser,

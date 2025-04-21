@@ -40,15 +40,24 @@ app.use("/api/v1/admin", authenticateUser, authorizeRoles("admin"), (req, res) =
     res.send("Welcome, Admin!");
 });
 */
-
+app.use("/api/v1/events", eventRouter); // Public route, no authenticateUser middleware here
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1", userRouter);
-
 app.use("/api/v1/bookings", bookingRouter);
-app.use("/api/v1", bookingRouter);
 
+app.use("/api/v1/booking", authenticateUser, bookingRouter);  // Example protected route
+app.use("/api/v1/users", authenticateUser, userRouter); // Protected users rout
+app.use("/api/v1", bookingRouter);
+app.use("/api/v1", userRouter);
 app.use("/api/v1", eventRouter);
-app.use("/api/v1/events", eventRouter);
+
+// app.use("/api/v1/users", userRouter);
+// app.use("/api/v1", userRouter);
+
+// app.use("/api/v1/bookings", bookingRouter);
+// app.use("/api/v1", bookingRouter);
+
+// app.use("/api/v1", eventRouter);
+// app.use("/api/v1/events", eventRouter);
 
 
 //app.use("/api/v1", authRouter);  // commented out the authRouter, try before uncommenting

@@ -3,12 +3,14 @@
 
 const express = require("express");
 const {
-  getAllEvents,
+  //getAllEvents,
   getEventById,
   createEvent,
   updateEvent,
   deleteEvent,
   getOrganizerEventAnalyticsForUser,
+  getApprovedEvents,
+  getAllEventsForAdmin,
   updateEventStatus
 } = require("../Controllers/eventController"); // Destructure methods from eventController
 const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
@@ -16,7 +18,11 @@ const { authenticateUser, authorizeRoles } = require("../Middleware/authenticati
 const router = express.Router(); // Initialize the router object
 
 // Public routes
-router.get("/", getAllEvents); // Get all approved events
+router.get("/", getApprovedEvents); // Public route - Get all approved events (No authentication middleware here)
+router.get("/all", authenticateUser, authorizeRoles("System Admin"), getAllEventsForAdmin);
+
+
+//router.get("/", getAllEvents); // Get all approved events
 router.get("/:id", getEventById); // Get event by ID
 
 // Organizer-only routes
@@ -46,4 +52,10 @@ router.get('/users/events/analytics', authenticateUser, authorizeRoles("Organize
   next(); // Proceed to the next middleware/controller
 }, getOrganizerEventAnalyticsForUser);
 
+router.get("/all", authenticateUser, authorizeRoles("System Admin"), getAllEventsForAdmin);
+//temp allow acess
+//router.get("/all", getAllEventsForAdmin);
+
+
 module.exports = router; // Export the router
+
