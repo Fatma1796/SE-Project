@@ -480,7 +480,7 @@ const deleteUser = async (req, res) => {
 //     res.status(500).json({ message: "Failed to get events for the current user" });
 //   }
 // };
-const Event = require("../Models/Event");
+//nst Event = require("../Models/Event");
 
 const getEventsForCurrentUser = async (req, res) => {
   console.log("Inside getEventsForCurrentUser");

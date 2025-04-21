@@ -4,26 +4,53 @@ const Event = require("../Models/Event");
 
 // Cancel a booking
 const cancelBooking = async (req, res) => {
-    try {
-      const booking = await Booking.findById(req.params.id);
-      if (!booking) {
-        return res.status(404).json({ message: "Booking not found" });
-      }
-  
-      // Find the event and update available tickets
-      const event = await Event.findById(booking.eventId);
-      if (event) {
-        event.availableTickets += booking.ticketsBooked;
-        await event.save();
-      }
-  
-      // Delete the booking
-      await booking.deleteOne();
-      res.status(200).json({ message: "Booking cancelled successfully" });
-    } catch (error) {
-      res.status(500).json({ message: error.message || "An error occurred while canceling the booking" });
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
     }
-  };
+
+    const event = await Event.findById(booking.event);
+    if (event) {
+      console.log("Event found:", event);
+      event.remainingTickets += booking.numberOfTickets;
+      await event.save();
+      console.log("Updated remainingTickets:", event.remainingTickets);
+    } else {
+      console.log("Event not found for booking.");
+    }
+
+    await booking.deleteOne();
+    res.status(200).json({ message: "Booking cancelled successfully" });
+
+  } catch (error) {
+    console.error("Error canceling booking:", error);
+    res.status(500).json({ message: error.message || "An error occurred while canceling the booking" });
+  }
+};
+
+
+// const cancelBooking = async (req, res) => {
+//     try {
+//       const booking = await Booking.findById(req.params.id);
+//       if (!booking) {
+//         return res.status(404).json({ message: "Booking not found" });
+//       }
+  
+//       // Find the event and update available tickets
+//       const event = await Event.findById(booking.eventId);
+//       if (event) {
+//         event.availableTickets += booking.ticketsBooked;
+//         await event.save();
+//       }
+  
+//       // Delete the booking
+//       await booking.deleteOne();
+//       res.status(200).json({ message: "Booking cancelled successfully" });
+//     } catch (error) {
+//       res.status(500).json({ message: error.message || "An error occurred while canceling the booking" });
+//     }
+//   };
   
   /*// Get all bookings for the current user
   const getUserBookings = async (req, res) => {
@@ -79,10 +106,9 @@ const bookTickets = async (req, res) => {
 
     // Find the event
     const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
-
+    if (event.status !== "approved") {
+      return res.status(400).json({ message: "Bookings can only be made for approved events" });
+       }
     console.log("Event found:", event);
 
     // Check ticket availability
