@@ -77,15 +77,12 @@ exports.updateEvent = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Debugging: Log the user's role
     console.log("User role:", req.user.role);
 
-    // Check if the user is an organizer or admin
     if (req.user.role !== "Organizer" && req.user.role !== "System Admin") {
       return res.status(403).json({ message: "You do not have permission to update this event" });
     }
 
-    // Allowed fields for update based on the schema
     const allowedFields = [
       "title",
       "description",
@@ -95,25 +92,53 @@ exports.updateEvent = async (req, res) => {
       "image",
       "ticketPrice",
       "totalTickets",
-      "remainingTickets",
-      "status"
+      "remainingTickets"
     ];
 
-    // Update only the allowed fields
+    if (req.user.role === "System Admin") {
+      allowedFields.push("status");
+    }
+
+    let attemptedStatusUpdate = false;
+    let updatedFields = {};
+
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
+        if (field === "status") {
+          const validStatuses = ["approved", "pending", "declined"];
+          if (!validStatuses.includes(req.body.status)) {
+            return res.status(400).json({ message: "Invalid status value" });
+          }
+        }
         event[field] = req.body[field];
+        updatedFields[field] = req.body[field];
       }
     }
 
-    // Save the updated event
+    // If organizer attempted status update
+    if (req.user.role === "Organizer" && req.body.status !== undefined) {
+      attemptedStatusUpdate = true;
+      updatedFields["status"] = "Rejected — organizers cannot change status";
+    }
+
     const updatedEvent = await event.save();
-    res.status(200).json(updatedEvent);
+
+    if (attemptedStatusUpdate) {
+      return res.status(200).json({
+        message: "Event updated successfully, but status change was not allowed for organizers.",
+        updatedFields
+      });
+    }
+
+    res.status(200).json({
+      message: "Event updated successfully.",
+      updatedFields
+    });
+
   } catch (err) {
-    console.error("Error in updateEvent:", err); // Log the error for debugging
+    console.error("Error in updateEvent:", err);
     res.status(500).json({ message: "Server error" });
   }
-
 };
 
 
