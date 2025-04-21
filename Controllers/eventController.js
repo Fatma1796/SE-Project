@@ -77,15 +77,12 @@ exports.updateEvent = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Debugging: Log the user's role
     console.log("User role:", req.user.role);
 
-    // Check if the user is an organizer or admin
     if (req.user.role !== "Organizer" && req.user.role !== "System Admin") {
       return res.status(403).json({ message: "You do not have permission to update this event" });
     }
 
-    // Allowed fields for update based on the schema
     const allowedFields = [
       "title",
       "description",
@@ -95,25 +92,53 @@ exports.updateEvent = async (req, res) => {
       "image",
       "ticketPrice",
       "totalTickets",
-      "remainingTickets",
-      "status"
+      "remainingTickets"
     ];
 
-    // Update only the allowed fields
+    if (req.user.role === "System Admin") {
+      allowedFields.push("status");
+    }
+
+    let attemptedStatusUpdate = false;
+    let updatedFields = {};
+
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
+        if (field === "status") {
+          const validStatuses = ["approved", "pending", "declined"];
+          if (!validStatuses.includes(req.body.status)) {
+            return res.status(400).json({ message: "Invalid status value" });
+          }
+        }
         event[field] = req.body[field];
+        updatedFields[field] = req.body[field];
       }
     }
 
-    // Save the updated event
+    // If organizer attempted status update
+    if (req.user.role === "Organizer" && req.body.status !== undefined) {
+      attemptedStatusUpdate = true;
+      updatedFields["status"] = "Rejected — organizers cannot change status";
+    }
+
     const updatedEvent = await event.save();
-    res.status(200).json(updatedEvent);
+
+    if (attemptedStatusUpdate) {
+      return res.status(200).json({
+        message: "Event updated successfully, but status change was not allowed for organizers.",
+        updatedFields
+      });
+    }
+
+    res.status(200).json({
+      message: "Event updated successfully.",
+      updatedFields
+    });
+
   } catch (err) {
-    console.error("Error in updateEvent:", err); // Log the error for debugging
+    console.error("Error in updateEvent:", err);
     res.status(500).json({ message: "Server error" });
   }
-
 };
 
 
@@ -236,79 +261,6 @@ exports.getOrganizerEventAnalyticsForUser = async (req, res) => {
 // exports.getOrganizerEventAnalyticsForUser = async (req, res) => {
 //   console.log("Inside getOrganizerEventAnalyticsForUser"); // This should print when the route is hit
 //   try {
-    
-//     const organizerId = req.user.id;  // The logged-in organizer's ID
-//     console.log("Organizer ID:", organizerId);  // Check the organizer ID
-
-//     // Find the last logged-in Standard User by checking the `lastLogin` field
-//     const lastLoggedInUser = await User.findOne({ role: 'Standard User' }).sort({ lastLogin: -1 });
-//     console.log("Last Logged In User:", lastLoggedInUser); // Log the last logged-in user
-
-//     if (!lastLoggedInUser) {
-//       return res.status(404).json({ message: "No standard users found" });
-//     }
-
-//     const userId = lastLoggedInUser._id; // Get the last logged-in user's ID
-//     console.log("Last Logged In User ID:", userId); // Log the userId being used
-
-//     // Get all bookings for the specified Standard User
-//     const bookings = await Booking.find({ user: userId }).populate("event");
-//     console.log("Bookings:", bookings); // Log the bookings found for the user
-
-//     // Filter bookings to only those events created by the current organizer
-//     const organizerEvents = bookings.filter(booking => booking.event.organizer.toString() === organizerId.toString());
-//     console.log("Organizer Events:", organizerEvents); // Log the filtered organizer events
-
-//     if (organizerEvents.length === 0) {
-//       return res.status(404).json({ message: "No events found for this user created by the organizer" });
-//     }
-
-//     // Prepare detailed event info and graph data
-//     const analytics = [];
-//     const labels = [];
-//     const bookedPercentages = [];
-
-//     organizerEvents.forEach(booking => {
-//       const event = booking.event;
-//       const totalTickets = event.totalTickets;
-//       const remainingTickets = event.remainingTickets;
-//       const ticketsBooked = totalTickets - remainingTickets;
-//       const bookedPercentage = (ticketsBooked / totalTickets) * 100;
-
-//       // Prepare detailed event info
-//       analytics.push({
-//         eventId: event._id,
-//         title: event.title,
-//         totalTickets,
-//         ticketsBooked,
-//         bookedPercentage: Number(bookedPercentage.toFixed(2)),
-//         status: event.status
-//       });
-
-//       // Prepare data for the graph
-//       labels.push(event.title);
-//       bookedPercentages.push(Number(bookedPercentage.toFixed(2))); // Round the percentage to two decimal places
-//     });
-
-//     console.log("Analytics:", analytics); // Log the detailed analytics data
-
-//     // Return both detailed event info and chart-friendly data
-//     res.status(200).json({ 
-//       analytics,  // Detailed event analytics
-//       chartData: { labels, bookedPercentages }  // Data ready for charting
-//     });
-    
-//   } catch (error) {
-//     console.error("Error in getOrganizerEventAnalyticsForUser:", error.message);
-//     res.status(500).json({ message: "Failed to get event analytics for the user" });
-//   }
-// };
-
-
-// exports.getOrganizerEventAnalyticsForUser = async (req, res) => {
-//   console.log("Inside getOrganizerEventAnalyticsForUser"); // This should print when the route is hit
-//   try {
-    
 //     const organizerId = req.user.id;  // The logged-in organizer's ID
 //     console.log("Organizer ID:", organizerId);  // Check the organizer ID
 

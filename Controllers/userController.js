@@ -419,57 +419,6 @@ const deleteUser = async (req, res) => {
 //   }
 // };
 
-
-
-const getEventsForCurrentUser = async (req, res) => {
-  console.log("Inside getEventsForCurrentUser");
-
-  try {
-    console.log("Authenticated user:", req.user);
-
-    if (!req.user || !req.user._id) {
-      return res.status(400).json({ message: "User authentication failed or missing user ID" });
-    }
-
-    if (req.user.role !== "Organizer") {
-      return res.status(403).json({ message: "Access denied. Only organizers can access this resource." });
-    }
-
-    console.log("Authenticated Organizer ID:", req.user._id);
-
-    const events = await Event.find({ organizer: req.user._id });
-
-    if (events.length === 0) {
-      return res.status(404).json({ message: "No events found for this organizer" });
-    }
-
-    const eventData = events.map(event => ({
-      eventId: event._id,
-      title: event.title,
-      description: event.description,
-      eventDate: event.eventDate,
-      location: event.location,
-      category: event.category,
-      totalTickets: event.totalTickets,
-      remainingTickets: event.remainingTickets,
-      status: event.status
-    }));
-
-    console.log("Event Data:", eventData);
-
-    res.status(200).json({ events: eventData });
-
-  } catch (error) {
-    console.error("Error in getEventsForCurrentUser:", error);
-    res.status(500).json({ message: "Failed to get events for the current organizer", error: error.message });
-  }
-};
-
-
-
-
-
-
 // const getEventsForCurrentUser = async (req, res) => {
 //   console.log("Inside getEventsForCurrentUser"); // This should print when the route is hit
 //   try {
@@ -531,6 +480,54 @@ const getEventsForCurrentUser = async (req, res) => {
 //     res.status(500).json({ message: "Failed to get events for the current user" });
 //   }
 // };
+const Event = require("../Models/Event");
+
+const getEventsForCurrentUser = async (req, res) => {
+  console.log("Inside getEventsForCurrentUser");
+
+  try {
+    console.log("Authenticated user:", req.user);
+
+    if (!req.user || !req.user._id) {
+      return res.status(400).json({ message: "User authentication failed or missing user ID" });
+    }
+
+    if (req.user.role !== "Organizer") {
+      return res.status(403).json({ message: "Access denied. Only organizers can access this resource." });
+    }
+
+    console.log("Authenticated Organizer ID:", req.user._id);
+
+    const events = await Event.find({ organizer: req.user._id });
+
+    if (events.length === 0) {
+      return res.status(404).json({ message: "No events found for this organizer" });
+    }
+
+    const eventData = events.map(event => ({
+      eventId: event._id,
+      title: event.title,
+      description: event.description,
+      eventDate: event.eventDate,
+      location: event.location,
+      category: event.category,
+      totalTickets: event.totalTickets,
+      remainingTickets: event.remainingTickets,
+      status: event.status
+    }));
+
+    console.log("Event Data:", eventData);
+
+    res.status(200).json({ events: eventData });
+
+  } catch (error) {
+    console.error("Error in getEventsForCurrentUser:", error);
+    res.status(500).json({ message: "Failed to get events for the current organizer", error: error.message });
+  }
+};
+
+module.exports = { getEventsForCurrentUser };
+
 
 // Get current user's bookings
 const getCurrentUserBookings = async (req, res) => {
