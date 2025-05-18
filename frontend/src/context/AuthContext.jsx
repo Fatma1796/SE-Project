@@ -1,46 +1,55 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Temporary import if authAPI isn't defined yet
+import axios from 'axios';
 
 // Create and export the context
 export const AuthContext = createContext();
 
-// Mock API services if they don't exist yet
+// Real API services connecting to your backend
 const authAPI = {
     login: async (credentials) => {
-        // Mock implementation
-        return {
-            data: {
-                token: 'mock-token',
-                user: {
-                    id: '123',
-                    name: credentials.email.split('@')[0],
-                    email: credentials.email,
-                    role: credentials.email.includes('admin') ? 'admin' : 'user'
-                }
-            }
-        };
+        return await axios.post('/api/v1/users/login', credentials, {
+            withCredentials: true
+        });
     },
     register: async (userData) => {
-        return {
-            data: {
-                message: 'Registration successful'
-            }
-        };
+        console.log("Sending registration data to backend:", userData);
+        return await axios.post('/api/v1/users/register', userData, {
+            withCredentials: true
+        });
     },
     logout: async () => {
-        return { data: { message: 'Logged out successfully' } };
+        const token = localStorage.getItem('token');
+        return await axios.post('/api/v1/users/logout', {}, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true
+        });
     },
     forgotPassword: async (email) => {
-        return { data: { message: 'Password reset email sent' } };
+        return await axios.post('/api/v1/users/forgotPassword', { email }, {
+            withCredentials: true
+        });
     }
 };
 
 const userAPI = {
     getProfile: async () => {
-        const user = JSON.parse(localStorage.getItem('user') || 'null');
-        if (!user) throw new Error('User not found');
-        return { data: user };
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No authentication token found');
+        
+        return await axios.get('/api/v1/users/profile', {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true
+        });
+    },
+    updateProfile: async (userData) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No authentication token found');
+        
+        return await axios.put('http://localhost:3000/api/v1/users/profile', userData, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true
+        });
     }
 };
 
@@ -69,6 +78,7 @@ export function AuthProvider({ children }) {
                 console.error('Auth verification failed:', err);
                 setUser(null);
                 localStorage.removeItem('token');
+                localStorage.removeItem('user');
             } finally {
                 setLoading(false);
             }
@@ -120,7 +130,6 @@ export function AuthProvider({ children }) {
         try {
             setLoading(true);
             await authAPI.logout();
-            navigate('/login');
         } catch (err) {
             console.error('Logout error:', err);
         } finally {
@@ -130,6 +139,7 @@ export function AuthProvider({ children }) {
             localStorage.removeItem('user');
             setUser(null);
             setLoading(false);
+            navigate('/login');
         }
     }, [navigate]);
 
@@ -152,8 +162,12 @@ export function AuthProvider({ children }) {
         try {
             setLoading(true);
             setError(null);
-            // Save the updated user data
-            const updatedUser = { ...user, ...userData };
+            
+            // Make actual API call to update profile
+            const response = await userAPI.updateProfile(userData);
+            const updatedUser = response.data;
+            
+            // Update local storage and state
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
             return updatedUser;
@@ -164,7 +178,7 @@ export function AuthProvider({ children }) {
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, []);
 
     const clearError = useCallback(() => {
         setError(null);

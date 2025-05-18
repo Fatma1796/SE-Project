@@ -9,7 +9,7 @@ function RegisterForm() {
         email: '',
         password: '',
         confirmPassword: '',
-        role: 'user' // Default to standard user
+        role: 'Standard User' // Default to standard user
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -157,8 +157,9 @@ function RegisterForm() {
                                 value={formData.role}
                                 onChange={handleChange}
                             >
-                                <option value="user">Standard User</option>
-                                <option value="organizer">Event Organizer</option>
+                                <option value="Standard User">Standard User</option>
+                                <option value="Organizer">Organizer</option>
+                                <option value="System Admin">System Admin</option>
                             </select>
                         </div>
                         

@@ -14,25 +14,63 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 function App() {
-    return (
-        <Router>
-            <AuthProvider>
-                <Navbar />
-                <div className="container mt-4">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/login" element={<LoginForm />} />
-                        <Route path="/register" element={<RegisterForm />} />
-                        <Route path="/forgot-password" element={<ForgotPassword />} />
-                        <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
-                        <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
-                        <Route path="/unauthorized" element={<UnauthorizedPage />} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                </div>
-            </AuthProvider>
-        </Router>
-    );
+  return (
+    <Router>
+      <AuthProvider>
+        <Navbar />
+        <div className="container mt-4">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
+            <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
+            <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </AuthProvider>
+    </Router>
+  );
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+// function App() {
+//         console.log("App rendered");
+//     return (
+//         <Router>
+//             <AuthProvider>
+//                 <Navbar />
+//                 <div className="container mt-4">
+//                     <Routes>
+//                         <Route path="/" element={<HomePage />} />
+//                         <Route path="/login" element={<LoginForm />} />
+//                         <Route path="/register" element={<RegisterForm />} />
+//                         <Route path="/forgot-password" element={<ForgotPassword />} />
+//                         <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
+//                         <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
+//                         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+//                         <Route path="*" element={<Navigate to="/" replace />} />
+//                     </Routes>
+//                 </div>
+//             </AuthProvider>
+//         </Router>
+//     );
+// }
+//export default App;
+
+
+
+
+
+
