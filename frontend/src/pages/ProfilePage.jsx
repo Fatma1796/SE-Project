@@ -9,19 +9,16 @@ function ProfilePage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const [bookings, setBookings] = useState([]); // NEW state for bookings
+    const [bookings, setBookings] = useState([]);
 
     useEffect(() => {
         if (user) {
             setName(user.name || '');
             setEmail(user.email || '');
 
-            // Fetch user's bookings
             const fetchBookings = async () => {
                 try {
                     const token = localStorage.getItem('token');
-                    console.log("Sending token:", token); // debug
-
                     const res = await axios.get('http://localhost:3000/api/v1/users/bookings', {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -29,7 +26,6 @@ function ProfilePage() {
                         withCredentials: true
                     });
 
-                    console.log("Fetched bookings:", res.data.bookings); // debug
                     setBookings(res.data.bookings || []);
                 } catch (err) {
                     console.error('Error fetching bookings:', err);
@@ -102,29 +98,6 @@ function ProfilePage() {
                         {loading ? 'Updating...' : 'Update Profile'}
                     </button>
                 </form>
-
-                <hr />
-
-                <h2>My Bookings</h2>
-                {bookings.length === 0 ? (
-                    <p>You haven’t booked any events yet.</p>
-                ) : (
-                    <ul className="list-group">
-                        {bookings.map((booking) => (
-                            <li key={booking._id} className="list-group-item">
-                                Event ID: {booking.event} <br />
-                                Booking ID: {booking._id} <br />
-                                Tickets: {booking.numberOfTickets} <br />
-                                Status: {booking.status}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-
-                <div>
-                    <strong>Debug Booking Data:</strong>
-                    <pre>{JSON.stringify(bookings, null, 2)}</pre>
-                </div>
             </div>
         </div>
     );
