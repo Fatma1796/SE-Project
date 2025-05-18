@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext.jsx';
-
+import { useNavigate } from 'react-router-dom';
 function ProfilePage() {
     const { user, updateProfile, loading: authLoading, error: authError } = useAuth();
     const [name, setName] = useState('');
@@ -10,6 +10,7 @@ function ProfilePage() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [bookings, setBookings] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user) {
@@ -52,6 +53,12 @@ function ProfilePage() {
         }
     };
 
+    // the booking button 
+     const handleViewBookings = () => {
+        navigate('/my-bookings'); //  Navigate to bookings page
+    };
+
+
     if (authLoading) return <div className="alert alert-info">Loading...</div>;
     if (!user) return <div className="alert alert-warning">Please log in to view your profile.</div>;
 
@@ -59,6 +66,9 @@ function ProfilePage() {
         <div className="card">
             <div className="card-header">
                 <h1>My Profile</h1>
+                 <button className="btn btn-outline-secondary" onClick={handleViewBookings}>
+                    View My Bookings
+                </button>
             </div>
             <div className="card-body">
                 {error && <div className="alert alert-danger">{error}</div>}

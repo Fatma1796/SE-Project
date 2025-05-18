@@ -12,6 +12,7 @@ import RegisterForm from './components/auth/RegisterForm';
 import ForgotPassword from './components/auth/ForgotPassword';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import UserBookingsPage from './pages/UserBookingsPage.jsx';
 
 function App() {
   return (
@@ -26,8 +27,10 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
             <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
+            <Route path="/my-bookings" element={ <PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} /> }/>
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
+                   
           </Routes>
         </div>
       </AuthProvider>

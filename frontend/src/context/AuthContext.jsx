@@ -29,7 +29,7 @@ const authAPI = {
         return await axios.post('/api/v1/users/forgotPassword', { email }, {
             withCredentials: true
         });
-    }
+    }, 
 };
 
 const userAPI = {
@@ -57,12 +57,12 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [bookings, setBookings] = useState([]); // <-- bookings state here
     const navigate = useNavigate();
-
+    
     // Check if user is already logged in when app loads
     useEffect(() => {
         const checkUserLoggedIn = async () => {
-            // Only attempt to get profile if token exists
             const token = localStorage.getItem('token');
             if (!token) {
                 setLoading(false);
@@ -87,7 +87,7 @@ export function AuthProvider({ children }) {
         checkUserLoggedIn();
     }, []);
 
-    // Define auth methods with useCallback to maintain reference stability
+    // Auth methods
     const login = useCallback(async (credentials) => {
         try {
             setLoading(true);
@@ -95,11 +95,9 @@ export function AuthProvider({ children }) {
             const response = await authAPI.login(credentials);
             const { token, user: userData } = response.data;
             
-            // Save the token and user data
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
             
-            // Set the user data
             setUser(userData);
             return userData;
         } catch (err) {
@@ -133,11 +131,10 @@ export function AuthProvider({ children }) {
         } catch (err) {
             console.error('Logout error:', err);
         } finally {
-            // Even if there's an error with the logout API call,
-            // we still want to remove the user from local state
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             setUser(null);
+            setBookings([]); // clear bookings on logout too
             setLoading(false);
             navigate('/login');
         }
@@ -163,11 +160,9 @@ export function AuthProvider({ children }) {
             setLoading(true);
             setError(null);
             
-            // Make actual API call to update profile
             const response = await userAPI.updateProfile(userData);
             const updatedUser = response.data;
             
-            // Update local storage and state
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
             return updatedUser;
@@ -184,7 +179,34 @@ export function AuthProvider({ children }) {
         setError(null);
     }, []);
 
-    // Memoize the context value with stable function references
+    // Fetch bookings and store in state
+  const getBookings = useCallback(async () => {
+    try {
+        const token = localStorage.getItem('token');
+        console.log("Token from localStorage:", token); // 👈 Add this line
+
+        if (!token) {
+            throw new Error('No token found in localStorage');
+        }
+
+        const res = await axios.get('http://localhost:3000/api/v1/users/bookings', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        setBookings(res.data || []);
+        return res.data;
+    } catch (error) {
+        console.error('Error in getBookings:', error);
+        setBookings([]);
+        throw error;
+    }
+}, []);
+
+    
+
+    // Context value
     const value = React.useMemo(() => ({
         user,
         loading,
@@ -195,9 +217,11 @@ export function AuthProvider({ children }) {
         forgotPassword,
         clearError,
         updateProfile,
+        getBookings,
+        bookings,              // <-- include bookings here
         isAuthenticated: !!user,
         role: user?.role || 'guest'
-    }), [user, loading, error, login, register, logout, forgotPassword, clearError, updateProfile]);
+    }), [user, loading, error, login, register, logout, forgotPassword, clearError, updateProfile, getBookings, bookings]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
