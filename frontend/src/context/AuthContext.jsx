@@ -2,6 +2,9 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+axios.defaults.baseURL = 'http://localhost:3000';
+
+
 // Create and export the context
 export const AuthContext = createContext();
 
@@ -26,7 +29,7 @@ const authAPI = {
         });
     },
     forgotPassword: async (email) => {
-        return await axios.post('/api/v1/users/forgotPassword', { email }, {
+        return await axios.put('/api/v1/users/forgetPassword', { email }, {
             withCredentials: true
         });
     }, 
