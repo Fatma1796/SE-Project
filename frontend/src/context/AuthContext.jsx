@@ -183,7 +183,7 @@ export function AuthProvider({ children }) {
     const clearError = useCallback(() => {
         setError(null);
     }, []);
-
+/*
     // Fetch bookings and store in state
   const getBookings = useCallback(async () => {
     try {
@@ -210,6 +210,35 @@ export function AuthProvider({ children }) {
 }, []);
 
     
+*/
+
+
+ // Fetch bookings and store in state
+  const getBookings = useCallback(async () => {
+    try {
+        const token = localStorage.getItem('token');
+        console.log("Token from localStorage:", token); // 👈 Add this line
+
+        if (!token) {
+            throw new Error('No token found in localStorage');
+        }
+
+        const res = await axios.get('http://localhost:3000/api/v1/users/bookings', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        setBookings(res.data || []);
+        return res.data;
+    } catch (error) {
+        console.error('Error in getBookings:', error);
+        setBookings([]);
+        throw error;
+    }
+}, []);
+
+
 
     // Context value
     const value = React.useMemo(() => ({
