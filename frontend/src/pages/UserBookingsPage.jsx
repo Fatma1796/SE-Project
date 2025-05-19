@@ -22,25 +22,27 @@ function UserBookings() {
     if (loading) return <p>Loading bookings...</p>;
     if (error) return <p className="text-red-500">Error: {error}</p>;
 
-    return (
-        <div>
-            <h2 className="text-xl font-bold mb-4">My Bookings</h2>
-            {bookings.length === 0 ? (
-                <p>No bookings found.</p>
-            ) : (
-                <ul className="space-y-4">
-                    {bookings.map((booking) => (
-                        <li key={booking._id} className="p-4 border rounded shadow">
-                            <p><strong>Booking ID:</strong> {booking._id}</p>
-                            <p><strong>Date:</strong> {new Date(booking.date).toLocaleDateString()}</p>
-                            <p><strong>Status:</strong> {booking.status}</p>
-                            {/* Add more fields as needed */}
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
+   return (
+    <div>
+        <h2 className="text-xl font-bold mb-4">My Bookings</h2>
+        {bookings.length === 0 ? (
+            <p>No bookings found.</p>
+        ) : (
+            <ul className="space-y-4">
+                {bookings.map((booking) => (
+                    <li key={booking._id} className="p-4 border rounded shadow">
+                        <p><strong>Event ID:</strong> {booking.event?._id || "N/A"}</p>
+                        <p><strong>Event Title:</strong> {booking.event?.title || "N/A"}</p>
+                        <p><strong>Date:</strong> {booking.event?.eventDate ? new Date(booking.event.eventDate).toLocaleDateString() : "N/A"}</p>
+                        <p><strong>Status:</strong> {booking.event?.status || "N/A"}</p>
+                    </li>
+                ))}
+            </ul>
+        )}
+    </div>
+);
+
+
 }
 
 export default UserBookings;
