@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import axios from 'axios';
 
@@ -11,40 +11,36 @@ function ForgotPassword() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [otpValue, setOtpValue] = useState(null);
     const { forgotPassword } = useAuth();
-    
-const handleRequestOtp = async (e) => {
-    e.preventDefault();
-    if (!email) {
-        setError('Please enter your email address');
-        return;
-    }
-    
-    setLoading(true);
-    setError('');
-    setSuccess('');
+     const navigate = useNavigate(); // Add this hook for navigation
 
-    try {
-        // Request OTP
-        const responseData = await forgotPassword(email);
-        console.log("OTP response:", responseData);
-        
-        // Store the OTP value from the response
-        if (responseData && responseData.otp) {
-            setOtpValue(responseData.otp);
-            setSuccess(`OTP sent to your email: ${responseData.otp}`); // In a real app, you wouldn't show this
-            setShowOtpForm(true);
-        } else {
-            setError('Failed to generate OTP. Please try again.');
+    
+    const handleRequestOtp = async (e) => {
+        e.preventDefault();
+        if (!email) {
+            setError('Please enter your email address');
+            return;
         }
-    } catch (err) {
-        console.error('Error requesting OTP:', err);
-        setError(err.message || 'An error occurred. Please try again.');
-    } finally {
-        setLoading(false);
-    }
-};
+        
+        setLoading(true);
+        setError('');
+        setSuccess('');
+
+        try {
+            // Request OTP
+            const responseData = await forgotPassword(email);
+            console.log("OTP request response:", responseData);
+            
+            setSuccess('OTP sent to the administrator email. Please check and enter the OTP below.');
+            setShowOtpForm(true);
+        } catch (err) {
+            console.error('Error requesting OTP:', err);
+            setError(err.message || 'An error occurred. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleResetPassword = async (e) => {
         e.preventDefault();
         if (!otp || !newPassword) {
@@ -71,6 +67,12 @@ const handleRequestOtp = async (e) => {
             setEmail('');
             setOtp('');
             setNewPassword('');
+                        // Show success message briefly before redirecting
+            setTimeout(() => {
+                navigate('/login'); // Redirect to login page after 1.5 seconds
+            }, 1500);
+
+            
         } catch (err) {
             console.error('Error resetting password:', err);
             setError(err.response?.data?.message || 'Failed to reset password. Please try again.');
@@ -88,7 +90,7 @@ const handleRequestOtp = async (e) => {
                     {!showOtpForm ? (
                         <>
                             <p className="text-muted mb-4">
-                                Enter your email address and we'll send you an OTP to reset your password.
+                                Enter your email address and we'll send an OTP to reset your password.
                             </p>
                             
                             <form onSubmit={handleRequestOtp}>
@@ -119,7 +121,7 @@ const handleRequestOtp = async (e) => {
                     ) : (
                         <>
                             <p className="text-muted mb-4">
-                                Enter the OTP sent to your email and your new password.
+                                Enter the OTP sent to administrator email and your new password.
                             </p>
                             
                             <form onSubmit={handleResetPassword}>

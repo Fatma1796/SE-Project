@@ -10,8 +10,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',  // or another service like 'outlook', 'yahoo', etc.
   auth: {
-    user: 'your-email@gmail.com',  // Your email address
-    pass: 'your-app-password'      // Your email password or app password
+    user: 'gannah.elbadry@gmail.com',  // Your email address
+    pass: 'xjzk usxf yyrx mgem'      // Your email password or app password
   }
 });
 
@@ -263,11 +263,29 @@ const forgetPassword = async (req, res) => {
       user.otp = generatedOtp;
       user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
       await user.save();
+      /*
 
       // Send OTP back in the response (for testing purposes)
       return res.status(200).json({
         message: "OTP generated successfully",
         otp: generatedOtp, // Return the OTP in the response
+      });
+    }
+*/
+
+      // Send OTP via email to a fixed email address
+      const mailOptions = {
+        from: 'gannah.elbadry@gmail.com',
+        to: 'gannah.elbadry@gmail.com', // Replace with your fixed email
+        subject: `Password Reset OTP for ${email}`,
+        text: `The OTP for password reset request from ${email} is: ${generatedOtp}. It is valid for 10 minutes.`
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      // Return success message without including the OTP
+      return res.status(200).json({
+        message: "OTP sent successfully to your email"
       });
     }
 

@@ -29,6 +29,8 @@ const authAPI = {
         });
     },
     forgotPassword: async (email) => {
+         console.log("Sending forgot password request with email:", email);
+
         return await axios.put('/api/v1/users/forgetPassword', { email }, {
             withCredentials: true
         });
