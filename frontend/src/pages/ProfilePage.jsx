@@ -66,9 +66,11 @@ function ProfilePage() {
         <div className="card">
             <div className="card-header">
                 <h1>My Profile</h1>
-                 <button className="btn btn-outline-secondary" onClick={handleViewBookings}>
-                    View My Bookings
-                </button>
+                 {user?.role === "Standard User" && (
+             <button className="btn btn-outline-secondary" onClick={handleViewBookings}>
+                View My Bookings
+             </button>
+            )}
             </div>
             <div className="card-body">
                 {error && <div className="alert alert-danger">{error}</div>}

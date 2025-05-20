@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../CSSmodules/BookingCard.css';
 
 function UserBookings() {
     const { getBookings, loading, error } = useAuth();
@@ -28,45 +29,61 @@ function UserBookings() {
     if (loading) return <p>Loading bookings...</p>;
     if (error) return <p className="text-red-500">Error: {error}</p>;
 
-    return (
-        <div>
+   return (
+  <div className="booking-card" style={{ position: "relative", minHeight: "100px" }}>
+    <button
+      onClick={() => navigate('/profile')}
+      style={{
+        position: "absolute",
+        top: 20,
+        left: 20,
+        background: "#fff",
+        border: "1px solid #ddd",
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        cursor: "pointer",
+        transition: "background 0.2s, box-shadow 0.2s"
+      }}
+      onMouseOver={e => {
+        e.currentTarget.style.background = "#f0f4ff";
+        e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,123,255,0.12)";
+      }}
+      onMouseOut={e => {
+        e.currentTarget.style.background = "#fff";
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.06)";
+      }}
+      aria-label="Back to Profile"
+    >
+      <span style={{ fontSize: "1.5rem", color: "#007bff" }}>←</span>
+    </button>
+    <h2 className="text-xl font-bold mb-4" style={{ marginLeft: 60 }}>My Bookings</h2>
+    <div style={{ marginBottom: "16px", fontWeight: "bold", marginLeft: 60 }}>
+      Total Spent: ${totalSpent}
+    </div>
+    {bookings.length === 0 ? (
+      <p style={{ marginLeft: 60 }}>No bookings found.</p>
+    ) : (
+      <ul className="space-y-4" style={{ marginLeft: 60 }}>
+        {bookings.map((booking) => (
+          <li key={booking._id} className="p-4 border rounded shadow" style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            <span>{booking.event?.title || "N/A"}</span>
             <button
-                onClick={() => navigate('/profile')}
-                style={{
-                    marginBottom: "20px",
-                    padding: "6px 16px",
-                    background: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                }}
+              onClick={() => navigate(`/bookings/${booking._id}`)}
+              className="btn btn-primary"
             >
-                ← Back to Profile
+              Show this booking's details
             </button>
-            <h2 className="text-xl font-bold mb-4">My Bookings</h2>
-            <div style={{ marginBottom: "16px", fontWeight: "bold" }}>
-            Total Spent: ${totalSpent}
-            </div>
-            {bookings.length === 0 ? (
-                <p>No bookings found.</p>
-            ) : (
-                <ul className="space-y-4">
-                    {bookings.map((booking) => (
-                        <li key={booking._id} className="p-4 border rounded shadow" style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                            <span>{booking.event?.title || "N/A"}</span>
-                            <button
-                                onClick={() => navigate(`/bookings/${booking._id}`)}
-                                className="btn btn-primary"
-                            >
-                                Show this booking's details
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
-}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+);
+};
 
 export default UserBookings;
