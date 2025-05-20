@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import '../CSSmodules/EventDetails.css';
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -59,61 +60,59 @@ const EventDetails = () => {
 
   if (!event) return <div>Loading...</div>;
 
-  return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            marginRight: "15px",
-            background: "none",
-            border: "none",
-            fontSize: "1.5rem",
-            cursor: "pointer"
-          }}
-          aria-label="Back"
-        >
-          ←
-        </button>
-        <h2 style={{ margin: 0 }}>{event.title}</h2>
-      </div>
-      <p><strong>Description:</strong> {event.description}</p>
-      <p><strong>Date:</strong> {new Date(event.eventDate).toLocaleString()}</p>
-      <p><strong>Location:</strong> {event.location}</p>
-      <p><strong>Category:</strong> {event.category}</p>
-      <p><strong>Ticket Price:</strong> ${event.ticketPrice}</p>
-      <p><strong>Total Tickets:</strong> {event.totalTickets}</p>
-      <p><strong>Tickets Available:</strong> {event.remainingTickets === 0 ? "Sold Out" : event.remainingTickets}</p>
-      {event.remainingTickets === 0 ? (
-      <button disabled style={{ background: "#ccc", cursor: "not-allowed" }}>Sold Out</button>
-      ) : (
-      <button onClick={() => setShowBooking(true)}>Book This Event</button>
-      )}
-
-   
-{showBooking && (
-  <form onSubmit={handleBooking} style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
-    <input
-      type="number"
-      min="1"
-      max={event.remainingTickets}
-      value={tickets}
-      onChange={e => setTickets(Number(e.target.value))}
-      required
-      style={{ marginRight: "10px" }}
-    />
-    <span style={{ marginRight: "10px" }}>
-      Price is now: ${tickets * event.ticketPrice}
-    </span>
-    <button type="submit">Confirm Booking</button>
-    <button type="button" onClick={() => setShowBooking(false)} style={{ marginLeft: "10px" }}>
-      Don't book
-    </button>
-  </form>
-)}
-
+ return (
+  <div className="event-details-card">
+    <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          marginRight: "15px",
+          background: "none",
+          border: "none",
+          fontSize: "1.5rem",
+          cursor: "pointer"
+        }}
+        aria-label="Back"
+      >
+        ←
+      </button>
+      <h2 style={{ margin: 0 }}>{event.title}</h2>
     </div>
-  );
+    <p><strong>Description:</strong> {event.description}</p>
+    <p><strong>Date:</strong> {new Date(event.eventDate).toLocaleString()}</p>
+    <p><strong>Location:</strong> {event.location}</p>
+    <p><strong>Category:</strong> {event.category}</p>
+    <p><strong>Ticket Price:</strong> ${event.ticketPrice}</p>
+    <p><strong>Total Tickets:</strong> {event.totalTickets}</p>
+    <p><strong>Tickets Available:</strong> {event.remainingTickets === 0 ? "Sold Out" : event.remainingTickets}</p>
+    {event.remainingTickets === 0 ? (
+      <button disabled style={{ background: "#ccc", cursor: "not-allowed" }}>Sold Out</button>
+    ) : (
+      <button onClick={() => setShowBooking(true)}>Book This Event</button>
+    )}
+
+    {showBooking && (
+      <form onSubmit={handleBooking} style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
+        <input
+          type="number"
+          min="1"
+          max={event.remainingTickets}
+          value={tickets}
+          onChange={e => setTickets(Number(e.target.value))}
+          required
+          style={{ marginRight: "10px" }}
+        />
+        <span style={{ marginRight: "10px" }}>
+          Price is now: ${tickets * event.ticketPrice}
+        </span>
+        <button type="submit">Confirm Booking</button>
+        <button type="button" onClick={() => setShowBooking(false)} style={{ marginLeft: "10px" }}>
+          Don't book
+        </button>
+      </form>
+    )}
+  </div>
+);
 };
 
 export default EventDetails;
