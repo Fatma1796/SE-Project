@@ -13,7 +13,10 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import UserBookingsPage from './pages/UserBookingsPage.jsx';
-
+import EventDetails from './components/EventDetails';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BookingDetailsPage from './pages/BookingDetailsPage';
 function App() {
   return (
     <Router>
@@ -30,8 +33,11 @@ function App() {
             <Route path="/my-bookings" element={ <PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} /> }/>
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
-                   
-          </Routes>
+            <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/bookings/:id" element={<BookingDetailsPage />} />
+
+            </Routes>
+             <ToastContainer position="top-right" autoClose={3000} />
         </div>
       </AuthProvider>
     </Router>
