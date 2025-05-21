@@ -123,7 +123,8 @@ const handleReject = (id) => {
 
   return (
     <div style={{ padding: "20px" }}>
-   {/* {user?.role === "Standard User" && ( */}
+     {/* This will ensure the event list is only visible to public users and Standard Users, not to Organizers or System Admins. */}
+  {(!user || user.role === "Standard User") && (
   <div className="home-container">
     <h1 className="welcome-title">Welcome to the Online Event Ticketing System</h1>
     <h2>Available Events</h2>
@@ -200,7 +201,7 @@ const handleReject = (id) => {
         ))}
     </div>
   </div>
-{/* )} */}
+ )} 
 
       {/* Organizer Add Event */}
 {user?.role === "Organizer" && (

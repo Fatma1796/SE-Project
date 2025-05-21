@@ -16,7 +16,7 @@ function LoginForm() {
     // Redirect if already logged in
     useEffect(() => {
         if (user) {
-               navigate('/profile');
+               navigate('/');
            // navigate(location.state?.from || '/');
         }
     }, [user, navigate, location]);
