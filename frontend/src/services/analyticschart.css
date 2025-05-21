@@ -110,7 +110,7 @@
 .analytics-container::-webkit-scrollbar-thumb:hover {
   background: rgba(66, 153, 225, 0.7);
 }
-// ...existing styles...
+
 
 .analytics-details h3 {
   font-size: 2rem;
