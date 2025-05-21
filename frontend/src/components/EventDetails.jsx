@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../context/AuthContext.jsx';
 import '../CSSmodules/EventDetails.css';
-
 const EventDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
   const [tickets, setTickets] = useState(1);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     axios.get(`/api/v1/events/${id}`)
@@ -62,22 +63,35 @@ const EventDetails = () => {
 
  return (
   <div className="event-details-card">
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginRight: "15px",
-          background: "none",
-          border: "none",
-          fontSize: "1.5rem",
-          cursor: "pointer"
-        }}
-        aria-label="Back"
-      >
-        ←
-      </button>
-      <h2 style={{ margin: 0 }}>{event.title}</h2>
-    </div>
+<div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+  <button
+    onClick={() => navigate(-1)}
+    style={{
+      marginRight: "12px",
+      backgroundImage: event.image ? `url(${event.image})` : undefined,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundColor: "#444",
+      border: "none",
+      borderRadius: "50%",
+      width: "32px",
+      height: "32px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: "1.4rem",
+      color: "#007bff",
+      cursor: "pointer",
+      transition: "background 0.2s"
+    }}
+    aria-label="Back"
+    onMouseOver={e => e.currentTarget.style.background = "#f0f4ff"}
+    onMouseOut={e => e.currentTarget.style.background = "none"}
+  >
+    ←
+  </button>
+  <h2 style={{ margin: 0 }}>{event.title}</h2>
+</div>
     <p><strong>Description:</strong> {event.description}</p>
     <p><strong>Date:</strong> {new Date(event.eventDate).toLocaleString()}</p>
     <p><strong>Location:</strong> {event.location}</p>
@@ -85,11 +99,16 @@ const EventDetails = () => {
     <p><strong>Ticket Price:</strong> ${event.ticketPrice}</p>
     <p><strong>Total Tickets:</strong> {event.totalTickets}</p>
     <p><strong>Tickets Available:</strong> {event.remainingTickets === 0 ? "Sold Out" : event.remainingTickets}</p>
-    {event.remainingTickets === 0 ? (
-      <button disabled style={{ background: "#ccc", cursor: "not-allowed" }}>Sold Out</button>
-    ) : (
-      <button onClick={() => setShowBooking(true)}>Book This Event</button>
-    )}
+   {event.remainingTickets === 0 ? (
+  <button disabled style={{ background: "#ccc", cursor: "not-allowed" }}>Sold Out</button>
+) : (
+  <button
+    onClick={user ? () => setShowBooking(true) : () => navigate('/login')}
+    disabled={!user}
+  >
+    {user ? "Book This Event" : "Login to Book"}
+  </button>
+)}
 
     {showBooking && (
       <form onSubmit={handleBooking} style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>

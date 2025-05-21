@@ -13,10 +13,12 @@ function ProfilePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user) {
-            setName(user.name || '');
-            setEmail(user.email || '');
+    if (user) {
+        setName(user.name || '');
+        setEmail(user.email || '');
 
+        // Only fetch bookings for Standard Users
+        if (user.role === "Standard User") {
             const fetchBookings = async () => {
                 try {
                     const token = localStorage.getItem('token');
@@ -35,7 +37,8 @@ function ProfilePage() {
 
             fetchBookings();
         }
-    }, [user]);
+    }
+}, [user]);
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();

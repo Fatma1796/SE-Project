@@ -27,6 +27,7 @@ function HomePage() {
   const [maxPrice, setMaxPrice] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [selectedSidebarEvent, setSelectedSidebarEvent] = useState(null);
 
 
   useEffect(() => {
@@ -122,7 +123,7 @@ const handleReject = (id) => {
 
   return (
     <div style={{ padding: "20px" }}>
-   {user?.role === "Standard User" && (
+   {/* {user?.role === "Standard User" && ( */}
   <div className="home-container">
     <h1 className="welcome-title">Welcome to the Online Event Ticketing System</h1>
     <h2>Available Events</h2>
@@ -199,14 +200,14 @@ const handleReject = (id) => {
         ))}
     </div>
   </div>
-)}
+{/* )} */}
 
       {/* Organizer Add Event */}
-     {user?.role === "Organizer" && (
+{user?.role === "Organizer" && (
   <div style={{ display: "flex", alignItems: "flex-start" }}>
     {/* Sidebar */}
     <div style={{
-      minWidth: 220,
+      minWidth: 260,
       marginRight: 32,
       background: "#fff",
       borderRadius: 12,
@@ -263,8 +264,15 @@ const handleReject = (id) => {
               <div
                 key={event._id}
                 className="event-card"
-                style={{ marginBottom: 10, cursor: "pointer" }}
-                onClick={() => navigate(`/events/${event._id}`)}
+                style={{
+                  marginBottom: 10,
+                  cursor: "pointer",
+                  background: selectedSidebarEvent && selectedSidebarEvent._id === event._id ? "#f0f4ff" : "#fff",
+                  border: selectedSidebarEvent && selectedSidebarEvent._id === event._id ? "2px solid #007bff" : "1px solid #eee",
+                  borderRadius: 8,
+                  padding: 8
+                }}
+                onClick={() => setSelectedSidebarEvent(event)}
               >
                 <div className="event-title" style={{ fontSize: "1rem" }}>{event.title}</div>
                 <div className="event-info" style={{ fontSize: "0.95rem" }}>
@@ -272,6 +280,43 @@ const handleReject = (id) => {
                 </div>
               </div>
             ))}
+          {/* Event Details in Sidebar */}
+         {selectedSidebarEvent && (
+  <div style={{
+    marginTop: 18,
+    background: "#f8fafc",
+    borderRadius: 10,
+    padding: 14,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    position: "relative"
+  }}>
+    {/* Close button */}
+    <button
+      onClick={() => setSelectedSidebarEvent(null)}
+      style={{
+        position: "absolute",
+        top: 8,
+        right: 8,
+        background: "none",
+        border: "none",
+        fontSize: "1.3rem",
+        color: "#888",
+        cursor: "pointer"
+      }}
+      aria-label="Close details"
+    >
+      ×
+    </button>
+    <h3 style={{ marginTop: 0 }}>{selectedSidebarEvent.title}</h3>
+    <p><strong>Date:</strong> {new Date(selectedSidebarEvent.eventDate).toLocaleString()}</p>
+    <p><strong>Location:</strong> {selectedSidebarEvent.location}</p>
+    <p><strong>Category:</strong> {selectedSidebarEvent.category}</p>
+    <p><strong>Ticket Price:</strong> ${selectedSidebarEvent.ticketPrice}</p>
+    <p><strong>Total Tickets:</strong> {selectedSidebarEvent.totalTickets}</p>
+    <p><strong>Tickets Available:</strong> {selectedSidebarEvent.remainingTickets}</p>
+    <p><strong>Description:</strong> {selectedSidebarEvent.description}</p>
+  </div>
+)}
         </div>
       )}
     </div>
@@ -292,6 +337,7 @@ const handleReject = (id) => {
     </div>
   </div>
 )}
+
       {/* System Admin Pending Approval */}
   {user?.role === "System Admin" && (
   <div className="admin-section">

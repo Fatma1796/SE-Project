@@ -33,7 +33,7 @@
 
 /* Event card */
 .event-card {
-  background: #fff;
+  /* background: #fff; */
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   padding: 20px;
@@ -141,8 +141,12 @@
     background: linear-gradient(90deg, #fffbe6 60%, #fffde4 100%);
 
 }
-.admin-event-card.approved { border-left: 6px solid #28a745; }
-.admin-event-card.declined { border-left: 6px solid #dc3545; }
+.admin-event-card.approved { border-left: 6px solid #28a745; 
+    background: linear-gradient(90deg, #e6fffa 60%, #f0fff4 100%);
+}
+.admin-event-card.declined { border-left: 6px solid #dc3545;
+    background: linear-gradient(90deg, #ffe6e6 60%, #fff4f4 100%);
+}
 
 .admin-event-card h4 {
   margin: 0 0 4px 0;
