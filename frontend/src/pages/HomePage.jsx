@@ -161,10 +161,13 @@ function HomePage() {
             <input type="text" placeholder="Image URL" value={newEvent.image} onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })} />
             <input type="number" placeholder="Ticket Price" value={newEvent.ticketPrice} onChange={(e) => setNewEvent({ ...newEvent, ticketPrice: e.target.value })} required />
             <input type="number" placeholder="Total Tickets" value={newEvent.totalTickets} onChange={(e) => setNewEvent({ ...newEvent, totalTickets: e.target.value })} required />
+           
             <button type="submit">Create Event</button>
           </form>
         </div>
       )}
+      
+
 
       {/* System Admin Pending Approval */}
       {user?.role === "System Admin" && (

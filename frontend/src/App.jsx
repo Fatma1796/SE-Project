@@ -13,7 +13,10 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import UserBookingsPage from './pages/UserBookingsPage.jsx';
-
+import Footer from './components/components/Footer';
+import MyEventsPage from './pages/MyEventsPage';
+import EditEventPage from './pages/EditEventPage';  // Add this import
+import OrganizerAnalyticsPage from './pages/OrganizerAnalyticsPage';  // Add this import
 function App() {
   return (
     <Router>
@@ -21,6 +24,11 @@ function App() {
         <Navbar />
         <div className="container mt-4">
           <Routes>
+            // Update your router configuration
+           <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }/>
+             <Route path="/my-events/analytics" element={<OrganizerAnalyticsPage />} />
+            
+            <Route path="/my-events/:id/edit"  element={<PrivateRoute   element={<EditEventPage />}                  allowedRoles={['Organizer']}   />     }    /> 
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
@@ -30,9 +38,11 @@ function App() {
             <Route path="/my-bookings" element={ <PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} /> }/>
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
-                   
+            <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }
+      />
           </Routes>
         </div>
+        <Footer />
       </AuthProvider>
     </Router>
   );
