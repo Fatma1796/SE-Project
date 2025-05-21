@@ -17,6 +17,10 @@ import Footer from './components/components/Footer';
 import MyEventsPage from './pages/MyEventsPage';
 import EditEventPage from './pages/EditEventPage';  // Add this import
 import OrganizerAnalyticsPage from './pages/OrganizerAnalyticsPage';  // Add this import
+import EventDetails from './components/EventDetails';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BookingDetailsPage from './pages/BookingDetailsPage';
 function App() {
   return (
     <Router>
@@ -40,7 +44,12 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
             <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }
       />
-          </Routes>
+          
+            <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/bookings/:id" element={<BookingDetailsPage />} />
+
+            </Routes>
+             <ToastContainer position="top-right" autoClose={3000} />
         </div>
         <Footer />
       </AuthProvider>
