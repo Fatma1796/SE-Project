@@ -31,7 +31,7 @@ function App() {
             // Update your router configuration
            <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }/>
              <Route path="/my-events/analytics" element={<OrganizerAnalyticsPage />} />
-            
+
             <Route path="/my-events/:id/edit"  element={<PrivateRoute   element={<EditEventPage />}                  allowedRoles={['Organizer']}   />     }    /> 
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginForm />} />
@@ -39,7 +39,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
             <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
-            <Route path="/my-bookings" element={ <PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} /> }/>
+             <Route path="/my-bookings" element={ <PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} /> }/> 
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
             <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }

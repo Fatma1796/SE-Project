@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer,toast } from "react-toastify";
 import '../CSSmodules/HomePage.css';
 
 function HomePage() {
@@ -60,8 +60,16 @@ function HomePage() {
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       )
       .then(() => {
-        alert("Event added!");
-        setNewEvent({
+        toast.success('Event added successfully!', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        className: 'custom-toast'});
+        // alert("Event added!");
+        ({
           title: "",
           description: "",
           eventDate: "",
@@ -74,7 +82,10 @@ function HomePage() {
       })
       .catch((err) => {
         console.error("Add event failed", err);
-        alert("Failed to add event.");
+              toast.error('Failed to add event. Please try again.', {
+ position: "top-center",
+        autoClose: 3000
+              });
       });
   };
 
@@ -123,6 +134,8 @@ const handleReject = (id) => {
 
   return (
     <div style={{ padding: "20px" }}>
+          <ToastContainer />
+
      {/* This will ensure the event list is only visible to public users and Standard Users, not to Organizers or System Admins. */}
   {(!user || user.role === "Standard User") && (
   <div className="home-container">

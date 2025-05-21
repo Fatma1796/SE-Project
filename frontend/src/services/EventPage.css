@@ -50,12 +50,6 @@
   line-height: 1.5;
 }
 
-.event-actions {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  background-color: #f7fafc;
-}
 
 .btn {
   padding: 0.5rem 1rem;
@@ -122,4 +116,97 @@
 .status-declined {
   background-color: #fed7d7;
   color: #c53030;
+}
+/* Toast customization */
+.btn-confirm, .btn-cancel {
+  background-color: #1a365d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.btn-confirm:hover, .btn-cancel:hover {
+  background-color: #2a4365;
+  transform: translateY(-1px);
+}
+
+.Toastify__toast-container {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  min-width: 300px;
+  max-width: 400px;
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #1a365d !important;
+  color: white;
+  position: relative !important;
+}
+
+.Toastify__toast-body {
+  padding: 12px 8px;
+}
+
+.delete-confirmation {
+  padding: 1rem;
+  color: white;
+}
+
+.delete-confirmation p {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.delete-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-confirm, .btn-cancel {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid white;
+  border-radius: 4px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btn-confirm:hover, .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Toast container fixes */
+.Toastify__toast-container {
+  position: fixed !important;
+  top: 2rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  max-width: 400px !important;
+  pointer-events: auto !important;
+}
+
+.delete-toast {
+  background: #1a365d !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
 }

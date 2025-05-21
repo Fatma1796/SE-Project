@@ -159,3 +159,30 @@
   display: flex;
   gap: 10px;
 }
+/* Toast customization */
+.Toastify__toast-container {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  min-width: 300px;
+  max-width: 400px;
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #1a365d !important;
+  color: white;
+}
+
+.Toastify__toast-body {
+  padding: 12px 8px;
+}
+
+.custom-toast {
+  position: relative !important;
+}

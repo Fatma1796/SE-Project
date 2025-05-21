@@ -1,3 +1,4 @@
+
 // import React from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import axios from 'axios';
@@ -5,59 +6,23 @@
 // const EventCard = ({ event, onDelete }) => {
 //   const navigate = useNavigate();
 //   const eventId = event._id || event.eventId || event.id;
+// // Add date formatting
+//   const formatDateTime = (dateString) => {
+//     const eventDate = new Date(dateString);
+//     const date = eventDate.toLocaleDateString('en-US', {
+//       year: 'numeric',
+//       month: 'long',
+//       day: 'numeric'
+//     });
+//     const time = eventDate.toLocaleTimeString('en-US', {
+//       hour: '2-digit',
+//       minute: '2-digit'
+//     });
+//     return { date, time };
+//   };
 
-//   const handleDelete = async () => {
-//     if (window.confirm('Are you sure you want to delete this event?')) {
-//       try {
-//         const token = localStorage.getItem('token');
-//         await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
-//           headers: { Authorization: `Bearer ${token}` }
-//         });
-//         onDelete(eventId);
-//       } catch (err) {
-//         console.error('Delete failed:', err);
-//         alert('Failed to delete event');
-//       }
-//     }
-//  };
-
-//   return (
-//     <div className="border rounded-lg shadow-sm p-4">
-//       <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
-//       <div className="text-black-600 mb-4">
-//         <p>Description: {event.description}</p>
-//         <p>Date: {new Date(event.eventDate).toLocaleDateString()}</p>
-//         <p>Location: {event.location}</p>
-//         <p>Price: ${typeof event.ticketPrice === 'number' ? event.ticketPrice.toFixed(2) : '0.00'}</p>
-//         <p>Tickets: {event.totalTickets}</p>
-//         <p>Status: {event.status}</p>
-//         <p>Category: {event.category}</p>
-//       </div>
-//       <div className="flex gap-2">
-//         <button
-//           onClick={() => navigate(`/my-events/${eventId}/edit`)}
-//           className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600"
-//         >
-//           Edit
-//         </button>
-//         <button
-//           onClick={handleDelete}
-//           className="bg-red-500 text-black px-4 py-2 rounded hover:bg-red-600"
-//         >
-//           Delete
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-// import React from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-
-// const EventCard = ({ event, onDelete }) => {
-//   const navigate = useNavigate();
-//   const eventId = event._id || event.eventId || event.id;
-
+//   // Get formatted date and time
+//   const { date, time } = formatDateTime(event.eventDate);
 //   const handleDelete = async () => {
 //     if (window.confirm('Are you sure you want to delete this event?')) {
 //       try {
@@ -72,10 +37,6 @@
 //       }
 //     }
 //   };
-// // export default EventCard;
-// const EventCard = ({ event, onDelete }) => {
-//   const navigate = useNavigate();
-//   const eventId = event._id || event.eventId || event.id;
 
 //   return (
 //     <div className="event-card">
@@ -87,11 +48,18 @@
 //       </div>
 //       <div className="event-content">
 //         <div className="event-info">
-//           <p>{event.description}</p>
-//           <p>Date: {new Date(event.eventDate).toLocaleDateString()}</p>
+//           <p>Description: {event.description}</p>
+//            <p className="event-datetime">
+//             <span className="datetime-label">Date:</span> 
+//             &nbsp;
+//             {date} {time}
+            
+//           </p>
+//           {/* <p>Date: {new Date(event.eventDate).toLocaleDateString()}</p> */}
 //           <p>Location: {event.location}</p>
 //           <p>Price: ${typeof event.ticketPrice === 'number' ? event.ticketPrice.toFixed(2) : '0.00'}</p>
 //           <p>Tickets: {event.totalTickets}</p>
+
 //           <p>Category: {event.category}</p>
 //         </div>
 //       </div>
@@ -103,7 +71,7 @@
 //           Edit
 //         </button>
 //         <button
-//           onClick={() => onDelete(eventId)}
+//           onClick={handleDelete}
 //           className="btn btn-delete"
 //         >
 //           Delete
@@ -112,33 +80,105 @@
 //     </div>
 //   );
 // };
-// }
+
 // export default EventCard;
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EventCard = ({ event, onDelete }) => {
   const navigate = useNavigate();
   const eventId = event._id || event.eventId || event.id;
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        onDelete(eventId);
-      } catch (err) {
-        console.error('Delete failed:', err);
-        alert('Failed to delete event');
+  const formatDateTime = (dateString) => {
+    const eventDate = new Date(dateString);
+    const date = eventDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const time = eventDate.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    return { date, time };
+  };
+
+  const { date, time } = formatDateTime(event.eventDate);
+
+// ...existing imports...
+
+
+  const handleDelete = () => {
+  toast.info(
+    <div className="delete-confirmation">
+      <p>Are you sure you want to delete this event?</p>
+      <div className="delete-actions">
+        <button
+          onClick={() => {
+            toast.dismiss();
+            deleteEvent();
+          }}
+          className="btn-confirm"
+        >
+          Yes
+        </button>
+        <button
+          onClick={() => toast.dismiss()}
+          className="btn-cancel"
+        >
+          No
+        </button>
+      </div>
+    </div>,
+    {
+      position: "top-center",
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      closeButton: false,
+      className: 'delete-toast',
+      toastId: 'delete-confirm',
+      pauseOnHover: true,
+      hideProgressBar: true,
+      style: { 
+        background: '#1a365d',
+        width: '100%',
+        maxWidth: '400px'
       }
+    }
+  );
+};
+
+ 
+  const deleteEvent = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Event deleted successfully!', {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      onDelete(eventId);
+    } catch (err) {
+      console.error('Delete failed:', err);
+      toast.error('Failed to delete event', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
   return (
     <div className="event-card">
+      <ToastContainer  enableMultiContainer 
+        containerId="delete-toast"
+        style={{ position: 'fixed' }}
+      />
       <div className="event-header">
         <h3 className="event-title">{event.title}</h3>
         <span className={`event-status status-${event.status}`}>
@@ -148,7 +188,11 @@ const EventCard = ({ event, onDelete }) => {
       <div className="event-content">
         <div className="event-info">
           <p>Description: {event.description}</p>
-          <p>Date: {new Date(event.eventDate).toLocaleDateString()}</p>
+          <p className="event-datetime">
+            <span className="datetime-label">Date:</span>
+            &nbsp;
+            <span className="datetime-value">{date} {time}</span>
+          </p>
           <p>Location: {event.location}</p>
           <p>Price: ${typeof event.ticketPrice === 'number' ? event.ticketPrice.toFixed(2) : '0.00'}</p>
           <p>Tickets: {event.totalTickets}</p>
