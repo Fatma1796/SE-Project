@@ -142,3 +142,22 @@
     padding: 1.5rem;
   }
 }
+/* Toast customization */
+.Toastify__toast {
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.Toastify__toast--success {
+  background: #48bb78;
+  color: white;
+}
+
+.Toastify__toast--error {
+  background: #f56565;
+  color: white;
+}
+
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.7);
+}
