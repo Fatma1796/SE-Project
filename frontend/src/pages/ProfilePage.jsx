@@ -1,116 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext.jsx';
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-function ProfilePage() {
-    const { user, updateProfile, loading: authLoading, error: authError } = useAuth();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
-    const [bookings, setBookings] = useState([]);
+
+const ProfilePage = () => {
+    const { user, role, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (user) {
-            setName(user.name || '');
-            setEmail(user.email || '');
-
-            const fetchBookings = async () => {
-                try {
-                    const token = localStorage.getItem('token');
-                    const res = await axios.get('http://localhost:3000/api/v1/users/bookings', {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                        withCredentials: true
-                    });
-
-                    setBookings(res.data.bookings || []);
-                } catch (err) {
-                    console.error('Error fetching bookings:', err);
-                }
-            };
-
-            fetchBookings();
-        }
-    }, [user]);
-
-    const handleUpdateProfile = async (e) => {
-        e.preventDefault();
-        setError(null);
-        setSuccess(null);
-        setLoading(true);
-
-        try {
-            await updateProfile({ name, email });
-            setSuccess('Profile updated successfully');
-        } catch (err) {
-            setError(err.message || 'Failed to update profile');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // the booking button 
-     const handleViewBookings = () => {
-        navigate('/my-bookings'); //  Navigate to bookings page
-    };
-
 
     if (authLoading) return <div className="alert alert-info">Loading...</div>;
     if (!user) return <div className="alert alert-warning">Please log in to view your profile.</div>;
 
     return (
-        <div className="card">
-            <div className="card-header">
-                <h1>My Profile</h1>
-                 <button className="btn btn-outline-secondary" onClick={handleViewBookings}>
-                    View My Bookings
-                </button>
-            </div>
-            <div className="card-body">
-                {error && <div className="alert alert-danger">{error}</div>}
-                {authError && <div className="alert alert-danger">{authError}</div>}
-                {success && <div className="alert alert-success">{success}</div>}
-                
-                <form onSubmit={handleUpdateProfile}>
+        <div className="container mt-4">
+            <div className="card">
+                <div className="card-header">
+                    <h1>My Profile</h1>
+                </div>
+                <div className="card-body">
                     <div className="mb-3">
-                        <label htmlFor="name" className="form-label">Name</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
+                        <label className="form-label">Name:</label>
+                        <p>{user.name}</p>
                     </div>
-                    
                     <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                        <label className="form-label">Email:</label>
+                        <p>{user.email}</p>
                     </div>
-                    
-                    <button 
-                        type="submit" 
+                    <div className="mb-3">
+                        <label className="form-label">Role:</label>
+                        <p>{role}</p> {/* Display the role here */}
+                    </div>
+                    <button
                         className="btn btn-primary"
-                        disabled={loading}
+                        onClick={() => navigate('/update-profile')}
                     >
-                        {loading ? 'Updating...' : 'Update Profile'}
+                        Update Profile
                     </button>
-                </form>
+                </div>
             </div>
         </div>
     );
-}
+};
 
 export default ProfilePage;

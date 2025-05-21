@@ -28,7 +28,7 @@ function Navbar() {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/profile">Profile</Link>
                                 </li>
-                                {user.role === 'admin' && ( // Note: Changed 'Admin' to lowercase 'admin'
+                                {user.role === 'System Admin' && ( // Note: Changed 'Admin' to lowercase 'admin'
                                     <li className="nav-item">
                                         <Link className="nav-link" to="/admin/dashboard">Admin Dashboard</Link>
                                     </li>
