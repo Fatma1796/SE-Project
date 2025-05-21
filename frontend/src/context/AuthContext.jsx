@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 axios.defaults.baseURL = 'http://localhost:3000';
 
@@ -184,10 +185,14 @@ export function AuthProvider({ children }) {
             
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
+            toast.success('Profile updated successfully!'); // <-- Add this line
+            window.location.reload();
+            navigate('/profile');
             return updatedUser;
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Profile update failed. Please try again.';
             setError(errorMessage);
+            toast.error(errorMessage); // <-- Optional: show error toast
             throw new Error(errorMessage);
         } finally {
             setLoading(false);
@@ -196,7 +201,7 @@ export function AuthProvider({ children }) {
 
     const clearError = useCallback(() => {
         setError(null);
-    }, []);
+    }, [navigate]);
 /*
     // Fetch bookings and store in state
   const getBookings = useCallback(async () => {

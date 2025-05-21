@@ -20,13 +20,18 @@ import OrganizerAnalyticsPage from './pages/OrganizerAnalyticsPage';  // Add thi
 import EventDetails from './components/EventDetails';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import BookingDetailsPage from './pages/BookingDetailsPage';
+import BookingDetailsPage from './pages/BookingDetailsPage';import UpdateProfilePage from './pages/UpdateProfilePage.jsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for styling
+
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Navbar />
         <div className="container mt-4">
+          {/* ToastContainer should be outside <Routes> */}
+          <ToastContainer position="top-right" autoClose={3000} />
           <Routes>
             // Update your router configuration
            <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }/>
@@ -38,18 +43,13 @@ function App() {
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
-            <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
-            <Route path="/my-bookings" element={ <PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} /> }/>
+            <Route path="/update-profile" element={<PrivateRoute element={<UpdateProfilePage />} />} />
+            <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['System Admin']} />} />
+            <Route path="/my-bookings" element={<PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
-            <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }
-      />
-          
-            <Route path="/events/:id" element={<EventDetails />} />
-            <Route path="/bookings/:id" element={<BookingDetailsPage />} />
-
-            </Routes>
-             <ToastContainer position="top-right" autoClose={3000} />
+                   
+          </Routes>
         </div>
         <Footer />
       </AuthProvider>
@@ -58,41 +58,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-// function App() {
-//         console.log("App rendered");
-//     return (
-//         <Router>
-//             <AuthProvider>
-//                 <Navbar />
-//                 <div className="container mt-4">
-//                     <Routes>
-//                         <Route path="/" element={<HomePage />} />
-//                         <Route path="/login" element={<LoginForm />} />
-//                         <Route path="/register" element={<RegisterForm />} />
-//                         <Route path="/forgot-password" element={<ForgotPassword />} />
-//                         <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
-//                         <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
-//                         <Route path="/unauthorized" element={<UnauthorizedPage />} />
-//                         <Route path="*" element={<Navigate to="/" replace />} />
-//                     </Routes>
-//                 </div>
-//             </AuthProvider>
-//         </Router>
-//     );
-// }
-//export default App;
-
-
-
-
-
-
