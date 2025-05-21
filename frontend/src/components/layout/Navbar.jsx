@@ -71,7 +71,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import '../../services/Navbar.css';  // Add this import
+//import '../../services/Navbar.css';  // Add this import
 
 function Navbar() {
     const { user, logout } = useAuth();
@@ -92,9 +92,7 @@ function Navbar() {
                     <li className="nav-item">
                         <Link className="nav-link" to="/register">Register</Link>
                     </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/forgot-password">Forgot Password</Link>
-                    </li>
+              
                 </>
             );
         }

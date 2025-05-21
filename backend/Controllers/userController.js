@@ -152,7 +152,24 @@ const loginUser = async (req, res) => {
 };
 
 
-
+// Add this function to userController.js
+const logoutUser = async (req, res) => {
+  try {
+    console.log("logoutUser function triggered");
+    
+    // Clear the JWT cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict"
+    });
+    
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in logoutUser:", error.message, error.stack);
+    return res.status(500).json({ message: "Server error during logout" });
+  }
+};
 
 // Get user profile
 const getUserProfile = async (req, res) => {
@@ -491,4 +508,5 @@ module.exports = {
   getEventsForCurrentUser,
 deleteUser,
 getCurrentUserBookings,
+  logoutUser, 
 };
