@@ -1,0 +1,125 @@
+.event-page {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.event-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  padding: 1rem;
+}
+
+.event-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.event-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.event-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.event-content {
+  padding: 1.5rem;
+}
+
+.event-info {
+  margin-bottom: 1rem;
+  color: #4a5568;
+}
+
+.event-info p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.event-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background-color: #f7fafc;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+
+
+
+.event-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background-color: #f7fafc;
+  justify-content: center;  /* Center the buttons */
+  align-items: center;     /* Center vertically */
+}
+
+.btn-edit {
+  background-color: #1a365d;  /* Navy blue */
+  color: #ffffff;            /* White text for better contrast */
+  transition: all 0.3s ease;
+  padding: 0.75rem 1.5rem;   /* Slightly larger padding */
+}
+
+.btn-edit:hover {
+  background-color: #2a4365;  /* Slightly lighter navy on hover */
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background-color: #1a365d;  /* Navy blue */
+  color: #ffffff;            /* White text for better contrast */
+  transition: all 0.3s ease;
+  padding: 0.75rem 1.5rem;   /* Slightly larger padding */
+}
+
+.btn-delete:hover {
+  background-color: #2a4365;  /* Slightly lighter navy on hover */
+  transform: translateY(-1px);
+}
+
+.event-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-approved {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.status-pending {
+  background-color: #fefcbf;
+  color: #975a16;
+}
+
+.status-declined {
+  background-color: #fed7d7;
+  color: #c53030;
+}

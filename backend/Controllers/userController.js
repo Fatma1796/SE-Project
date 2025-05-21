@@ -441,7 +441,8 @@ const getEventsForCurrentUser = async (req, res) => {
       category: event.category,
       totalTickets: event.totalTickets,
       remainingTickets: event.remainingTickets,
-      status: event.status
+      status: event.status,
+      ticketPrice: event.ticketPrice,
     }));
 
     console.log("Event Data:", eventData);
