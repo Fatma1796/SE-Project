@@ -1,0 +1,56 @@
+/* EventDetails.css */
+.event-card {
+  /* Remove or comment out the background property if present */
+  /* background: #fff; */
+  position: relative;
+  overflow: hidden;
+}
+
+.event-card-overlay {
+  background: rgba(0,0,0,0.55);
+  padding: 16px;
+  border-radius: 0 0 12px 12px;
+  width: 100%;
+  color: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.event-details-card h2 {
+  font-size: 2rem;
+  color: #007bff;
+}
+
+.event-details-card p {
+  margin: 10px 0;
+  font-size: 1.08rem;
+}
+
+.event-details-card button {
+  background: linear-gradient(90deg, #007bff 60%, #ff6f61 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
+.event-details-card button[disabled] {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.event-details-card form {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 14px 12px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

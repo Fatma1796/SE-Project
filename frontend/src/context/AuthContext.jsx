@@ -22,13 +22,27 @@ const authAPI = {
             withCredentials: true
         });
     },
+
     logout: async () => {
+    try {
         const token = localStorage.getItem('token');
         return await axios.post('/api/v1/users/logout', {}, {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true
         });
-    },
+    } catch (error) {
+        console.error('Logout API error:', error);
+        // Still return a resolved promise so UI logout proceeds even if API fails
+        return Promise.resolve();
+    }
+},
+    // logout: async () => {
+    //     const token = localStorage.getItem('token');
+    //     return await axios.post('/api/v1/users/logout', {}, {
+    //         headers: { Authorization: `Bearer ${token}` },
+    //         withCredentials: true
+    //     });
+    // },
     forgotPassword: async (email) => {
          console.log("Sending forgot password request with email:", email);
 

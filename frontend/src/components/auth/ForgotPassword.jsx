@@ -104,6 +104,7 @@ function ForgotPassword() {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="Enter your email"
                                         required
+                                          autoComplete="email"
                                     />
                                 </div>
                                 
@@ -135,6 +136,9 @@ function ForgotPassword() {
                                         onChange={(e) => setOtp(e.target.value)}
                                         placeholder="Enter OTP"
                                         required
+                                           autoComplete="one-time-code" // Add this
+                                            inputMode="numeric" 
+                                            pattern="[0-9]*" 
                                     />
                                 </div>
                                 
@@ -148,6 +152,8 @@ function ForgotPassword() {
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Enter new password"
                                         required
+                                        autoComplete="new-password" // Add this
+                                        minLength="6"
                                     />
                                 </div>
                                 

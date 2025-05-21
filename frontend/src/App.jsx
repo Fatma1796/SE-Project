@@ -13,7 +13,14 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import UserBookingsPage from './pages/UserBookingsPage.jsx';
-import UpdateProfilePage from './pages/UpdateProfilePage.jsx';
+import Footer from './components/components/Footer';
+import MyEventsPage from './pages/MyEventsPage';
+import EditEventPage from './pages/EditEventPage';  // Add this import
+import OrganizerAnalyticsPage from './pages/OrganizerAnalyticsPage';  // Add this import
+import EventDetails from './components/EventDetails';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BookingDetailsPage from './pages/BookingDetailsPage';import UpdateProfilePage from './pages/UpdateProfilePage.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS for styling
 
@@ -26,6 +33,11 @@ function App() {
           {/* ToastContainer should be outside <Routes> */}
           <ToastContainer position="top-right" autoClose={3000} />
           <Routes>
+            // Update your router configuration
+           <Route path="/my-events" element={ <PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />  }/>
+             <Route path="/my-events/analytics" element={<OrganizerAnalyticsPage />} />
+            
+            <Route path="/my-events/:id/edit"  element={<PrivateRoute   element={<EditEventPage />}                  allowedRoles={['Organizer']}   />     }    /> 
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
@@ -36,8 +48,10 @@ function App() {
             <Route path="/my-bookings" element={<PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
+                   
           </Routes>
         </div>
+        <Footer />
       </AuthProvider>
     </Router>
   );

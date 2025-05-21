@@ -105,6 +105,8 @@ function RegisterForm() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
+                                autoComplete="name" // Add this
+
                             />
                         </div>
                         
@@ -118,6 +120,7 @@ function RegisterForm() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
+                                autoComplete="email"
                             />
                         </div>
                         
@@ -132,6 +135,7 @@ function RegisterForm() {
                                 onChange={handleChange}
                                 required
                                 minLength="6"
+                                 autoComplete="new-password"
                             />
                         </div>
                         
@@ -145,6 +149,7 @@ function RegisterForm() {
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 required
+                                 autoComplete="new-password"
                             />
                         </div>
                         

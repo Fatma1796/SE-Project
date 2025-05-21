@@ -16,7 +16,7 @@ function LoginForm() {
     // Redirect if already logged in
     useEffect(() => {
         if (user) {
-               navigate('/profile');
+               navigate('/');
            // navigate(location.state?.from || '/');
         }
     }, [user, navigate, location]);
@@ -56,7 +56,28 @@ function LoginForm() {
                         </div>
                     )}
                     
-                    <form onSubmit={handleSubmit} noValidate>
+
+                      <form onSubmit={handleSubmit} noValidate>
+                        <div className="mb-3">
+                            <label htmlFor="email" className="form-label">Email</label>
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                autoComplete="email"
+                                aria-describedby="emailHelp"
+                            />
+                            <small id="emailHelp" className="form-text text-muted">
+                                Enter your registered email address
+                            </small>
+                        </div>
+
+
+                    {/* <form onSubmit={handleSubmit} noValidate>
                         <div className="mb-3">
                             <label className="form-label">
                                 Email
@@ -72,9 +93,25 @@ function LoginForm() {
                             <small className="form-text text-muted">
                                 Enter your registered email address
                             </small>
+                        </div> */}
+                        
+                           <div className="mb-3">
+                            <label htmlFor="password" className="form-label">Password</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                autoComplete="current-password"
+                                 aria-label="Password field"
+                            />
                         </div>
                         
-                        <div className="mb-3">
+
+                        {/* <div className="mb-3">
                             <label className="form-label">
                                 Password
                                 <input
@@ -86,7 +123,7 @@ function LoginForm() {
                                     required
                                 />
                             </label>
-                        </div>
+                        </div> */}
                         
                         <div className="d-grid">
                             <button 

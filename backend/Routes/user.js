@@ -12,6 +12,7 @@ const {
   deleteUser,
   getCurrentUserBookings,
   getSingleUser,
+  logoutUser
 } = require("../Controllers/userController");
 const { authenticateUser, authorizeRoles } = require("../Middleware/authenticationMiddleware");
 
@@ -36,6 +37,8 @@ router.get("/profile", authenticateUser, getUserProfile);
 
 // Update user profile (requires authentication)
 router.put("/profile", authenticateUser, updateUserProfile);
+
+router.post('/logout', logoutUser);
 
 // Admin-only route (requires 'System Admin' role)
 router.get("/admin-dashboard", authenticateUser, authorizeRoles("System Admin"), (req, res) => {
