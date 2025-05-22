@@ -1,91 +1,10 @@
 
-// import React from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-
-// const EventCard = ({ event, onDelete }) => {
-//   const navigate = useNavigate();
-//   const eventId = event._id || event.eventId || event.id;
-// // Add date formatting
-//   const formatDateTime = (dateString) => {
-//     const eventDate = new Date(dateString);
-//     const date = eventDate.toLocaleDateString('en-US', {
-//       year: 'numeric',
-//       month: 'long',
-//       day: 'numeric'
-//     });
-//     const time = eventDate.toLocaleTimeString('en-US', {
-//       hour: '2-digit',
-//       minute: '2-digit'
-//     });
-//     return { date, time };
-//   };
-
-//   // Get formatted date and time
-//   const { date, time } = formatDateTime(event.eventDate);
-//   const handleDelete = async () => {
-//     if (window.confirm('Are you sure you want to delete this event?')) {
-//       try {
-//         const token = localStorage.getItem('token');
-//         await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
-//           headers: { Authorization: `Bearer ${token}` }
-//         });
-//         onDelete(eventId);
-//       } catch (err) {
-//         console.error('Delete failed:', err);
-//         alert('Failed to delete event');
-//       }
-//     }
-//   };
-
-//   return (
-//     <div className="event-card">
-//       <div className="event-header">
-//         <h3 className="event-title">{event.title}</h3>
-//         <span className={`event-status status-${event.status}`}>
-//           {event.status}
-//         </span>
-//       </div>
-//       <div className="event-content">
-//         <div className="event-info">
-//           <p>Description: {event.description}</p>
-//            <p className="event-datetime">
-//             <span className="datetime-label">Date:</span> 
-//             &nbsp;
-//             {date} {time}
-            
-//           </p>
-//           {/* <p>Date: {new Date(event.eventDate).toLocaleDateString()}</p> */}
-//           <p>Location: {event.location}</p>
-//           <p>Price: ${typeof event.ticketPrice === 'number' ? event.ticketPrice.toFixed(2) : '0.00'}</p>
-//           <p>Tickets: {event.totalTickets}</p>
-
-//           <p>Category: {event.category}</p>
-//         </div>
-//       </div>
-//       <div className="event-actions">
-//         <button
-//           onClick={() => navigate(`/my-events/${eventId}/edit`)}
-//           className="btn btn-edit"
-//         >
-//           Edit
-//         </button>
-//         <button
-//           onClick={handleDelete}
-//           className="btn btn-delete"
-//         >
-//           Delete
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
 
 // export default EventCard;
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast ,ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const EventCard = ({ event, onDelete }) => {
@@ -108,71 +27,26 @@ const EventCard = ({ event, onDelete }) => {
 
   const { date, time } = formatDateTime(event.eventDate);
 
-// ...existing imports...
-
-
-  const handleDelete = () => {
-  toast.info(
-    <div className="delete-confirmation">
-      <p>Are you sure you want to delete this event?</p>
-      <div className="delete-actions">
-        <button
-          onClick={() => {
-            toast.dismiss();
-            deleteEvent();
-          }}
-          className="btn-confirm"
-        >
-          Yes
-        </button>
-        <button
-          onClick={() => toast.dismiss()}
-          className="btn-cancel"
-        >
-          No
-        </button>
-      </div>
-    </div>,
-    {
-      position: "top-center",
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      closeButton: false,
-      className: 'delete-toast',
-      toastId: 'delete-confirm',
-      pauseOnHover: true,
-      hideProgressBar: true,
-      style: { 
-        background: '#1a365d',
-        width: '100%',
-        maxWidth: '400px'
+const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this event?')) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        // Call onDelete only after successful deletion
+        if (onDelete) {
+          onDelete(eventId);
+        }
+      } catch (err) {
+        console.error('Delete failed:', err);
+        alert('Failed to delete event');
       }
     }
-  );
-};
-
- 
-  const deleteEvent = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success('Event deleted successfully!', {
-        position: "top-center",
-        autoClose: 2000,
-      });
-      onDelete(eventId);
-    } catch (err) {
-      console.error('Delete failed:', err);
-      toast.error('Failed to delete event', {
-        position: "top-center",
-        autoClose: 3000,
-      });
-    }
   };
-
+ 
+ 
   return (
     <div className="event-card">
       <ToastContainer  enableMultiContainer 

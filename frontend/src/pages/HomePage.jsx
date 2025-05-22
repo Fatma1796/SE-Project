@@ -29,6 +29,7 @@ function HomePage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedSidebarEvent, setSelectedSidebarEvent] = useState(null);
+  const [showAddEventForm, setShowAddEventForm] = useState(false);
 
 
   useEffect(() => {
@@ -70,7 +71,8 @@ function HomePage() {
         draggable: false,
         className: 'custom-toast'});
         // alert("Event added!");
-        ({
+        setShowAddEventForm(false); // <-- Close the form here!
+      setNewEvent({
           title: "",
           description: "",
           eventDate: "",
@@ -218,6 +220,11 @@ const handleReject = (id) => {
  )} 
 
       {/* Organizer Add Event */}
+
+ 
+
+
+
 {user?.role === "Organizer" && (
   <div style={{ display: "flex", alignItems: "flex-start" }}>
     {/* Sidebar */}
@@ -229,6 +236,7 @@ const handleReject = (id) => {
       boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
       padding: "18px 12px"
     }}>
+      <h2 style={{ textAlign: "center", marginBottom: 20 }}>Welcome Organizer</h2>
       <button
         onClick={() => setShowEventsSidebar((prev) => !prev)}
         style={{
@@ -241,104 +249,173 @@ const handleReject = (id) => {
           fontWeight: 600,
           fontSize: "1.1rem",
           cursor: "pointer",
-          marginBottom: 8,
+          marginBottom: 12,
           transition: "background 0.2s"
         }}
       >
         {showEventsSidebar ? "Hide" : "Show"} Available Events
       </button>
-      {showEventsSidebar && (
-        <div style={{ marginTop: 10 }}>
-          {/* Search & Filter */}
-          <div style={{ marginBottom: 12 }}>
-            <input
-              type="text"
-              placeholder="Search events..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #ccc", marginBottom: 6, width: "100%" }}
-            />
-            <select
-              value={categoryFilter}
-              onChange={e => setCategoryFilter(e.target.value)}
-              style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #ccc", width: "100%" }}
-            >
-              <option value="">All Categories</option>
-              {[...new Set(events.map(e => e.category).filter(Boolean))].map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+      {/* Create Event Button */}
+      <button
+        onClick={() => setShowAddEventForm((prev) => !prev)}
+        style={{
+          width: "100%",
+          background: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          padding: "10px 0",
+          fontWeight: 600,
+          fontSize: "1.05rem",
+          cursor: "pointer",
+          marginBottom: 10
+        }}
+      >
+        {showAddEventForm ? "Close Event Form" : "Create a New Event"}
+      </button>
+      {/* Edit My Events Button */}
+      <button
+        onClick={() => navigate('/my-events')}
+        style={{
+          width: "100%",
+          background: "#6c757d",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          padding: "10px 0",
+          fontWeight: 600,
+          fontSize: "1.05rem",
+          cursor: "pointer",
+          marginBottom: 10
+        }}
+      >
+        Edit My Events
+      </button>
+      {/* ...existing sidebar code... */}
+     {showEventsSidebar && (
+  <div style={{ marginTop: 10 }}>
+    {/* Search & Filter */}
+    <div style={{ marginBottom: 12 }}>
+      <input
+        type="text"
+        placeholder="Search events..."
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #ccc", marginBottom: 6, width: "100%" }}
+      />
+      <select
+        value={categoryFilter}
+        onChange={e => setCategoryFilter(e.target.value)}
+        style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #ccc", width: "100%" }}
+      >
+        <option value="">All Categories</option>
+        {[...new Set(events.map(e => e.category).filter(Boolean))].map(cat => (
+          <option key={cat} value={cat}>{cat}</option>
+        ))}
+      </select>
+    </div>
+    {/* Filtered Event List */}
+    {approvedEvents
+      .filter(event =>
+        (!searchTerm || event.title.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (!categoryFilter || event.category === categoryFilter)
+      )
+      .map(event => (
+        <div
+          key={event._id}
+          className="event-card"
+          style={{
+            marginBottom: 10,
+            cursor: "pointer",
+            background: selectedSidebarEvent && selectedSidebarEvent._id === event._id ? "#f0f4ff" : "#fff",
+            border: selectedSidebarEvent && selectedSidebarEvent._id === event._id ? "2px solid #007bff" : "1px solid #eee",
+            borderRadius: 8,
+            padding: 8
+          }}
+          onClick={() => setSelectedSidebarEvent(event)}
+        >
+          <div className="event-title" style={{ fontSize: "1rem" }}>{event.title}</div>
+          <div className="event-info" style={{ fontSize: "0.95rem" }}>
+            {new Date(event.eventDate).toLocaleDateString()}
           </div>
-          {/* Filtered Event List */}
-          {approvedEvents
-            .filter(event =>
-              (!searchTerm || event.title.toLowerCase().includes(searchTerm.toLowerCase())) &&
-              (!categoryFilter || event.category === categoryFilter)
-            )
-            .map(event => (
-              <div
-                key={event._id}
-                className="event-card"
-                style={{
-                  marginBottom: 10,
-                  cursor: "pointer",
-                  background: selectedSidebarEvent && selectedSidebarEvent._id === event._id ? "#f0f4ff" : "#fff",
-                  border: selectedSidebarEvent && selectedSidebarEvent._id === event._id ? "2px solid #007bff" : "1px solid #eee",
-                  borderRadius: 8,
-                  padding: 8
-                }}
-                onClick={() => setSelectedSidebarEvent(event)}
-              >
-                <div className="event-title" style={{ fontSize: "1rem" }}>{event.title}</div>
-                <div className="event-info" style={{ fontSize: "0.95rem" }}>
-                  {new Date(event.eventDate).toLocaleDateString()}
-                </div>
-              </div>
-            ))}
-          {/* Event Details in Sidebar */}
-         {selectedSidebarEvent && (
-  <div style={{
-    marginTop: 18,
-    background: "#f8fafc",
-    borderRadius: 10,
-    padding: 14,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-    position: "relative"
-  }}>
-    {/* Close button */}
-    <button
-      onClick={() => setSelectedSidebarEvent(null)}
-      style={{
-        position: "absolute",
-        top: 8,
-        right: 8,
-        background: "none",
-        border: "none",
-        fontSize: "1.3rem",
-        color: "#888",
-        cursor: "pointer"
-      }}
-      aria-label="Close details"
-    >
-      ×
-    </button>
-    <h3 style={{ marginTop: 0 }}>{selectedSidebarEvent.title}</h3>
-    <p><strong>Date:</strong> {new Date(selectedSidebarEvent.eventDate).toLocaleString()}</p>
-    <p><strong>Location:</strong> {selectedSidebarEvent.location}</p>
-    <p><strong>Category:</strong> {selectedSidebarEvent.category}</p>
-    <p><strong>Ticket Price:</strong> ${selectedSidebarEvent.ticketPrice}</p>
-    <p><strong>Total Tickets:</strong> {selectedSidebarEvent.totalTickets}</p>
-    <p><strong>Tickets Available:</strong> {selectedSidebarEvent.remainingTickets}</p>
-    <p><strong>Description:</strong> {selectedSidebarEvent.description}</p>
+        </div>
+      ))}
+    {/* Event Details in Sidebar */}
+    {selectedSidebarEvent && (
+      <div style={{
+        marginTop: 18,
+        background: "#f8fafc",
+        borderRadius: 10,
+        padding: 14,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        position: "relative"
+      }}>
+        {/* Close button */}
+        <button
+          onClick={() => setSelectedSidebarEvent(null)}
+          style={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            background: "none",
+            border: "none",
+            fontSize: "1.3rem",
+            color: "#888",
+            cursor: "pointer"
+          }}
+          aria-label="Close details"
+        >
+          ×
+        </button>
+        <h3 style={{ marginTop: 0 }}>{selectedSidebarEvent.title}</h3>
+        <p><strong>Date:</strong> {new Date(selectedSidebarEvent.eventDate).toLocaleString()}</p>
+        <p><strong>Location:</strong> {selectedSidebarEvent.location}</p>
+        <p><strong>Category:</strong> {selectedSidebarEvent.category}</p>
+        <p><strong>Ticket Price:</strong> ${selectedSidebarEvent.ticketPrice}</p>
+        <p><strong>Total Tickets:</strong> {selectedSidebarEvent.totalTickets}</p>
+        <p><strong>Tickets Available:</strong> {selectedSidebarEvent.remainingTickets}</p>
+        <p><strong>Description:</strong> {selectedSidebarEvent.description}</p>
+      </div>
+    )}
   </div>
 )}
-        </div>
-      )}
     </div>
-    {/* Main Content: Add Event Form */}
-    <div className="add-event-container" style={{ flex: 1 }}>
-      <h2>Add New Event</h2>
-      <form onSubmit={handleAddEvent}>
+{/* Main Content: Add Event Form */}
+<div className="add-event-container" style={{ flex: 1 }}>
+  {showAddEventForm && (
+    <div
+      style={{
+        position: "relative",
+        background: "#fff",
+        borderRadius: 12,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        padding: "32px 24px 24px 24px",
+        maxWidth: 420,
+        margin: "50px auto", // adds spacing and centers vertically
+      }}
+    >
+      {/* Close button */}
+      <button
+        onClick={() => setShowAddEventForm(false)}
+        style={{
+          position: "absolute",
+          top: 12,
+          right: -180,
+          background: "none",
+          border: "none",
+          fontSize: "1.5rem",
+          color: "#666",
+          cursor: "pointer",
+        }}
+        aria-label="Close form"
+      >
+        ×
+      </button>
+
+      <h2 style={{ marginTop: 16, marginBottom: 24, textAlign: "center" }}>
+        Add New Event
+      </h2>
+      <form onSubmit={handleAddEvent} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <input type="text" placeholder="Title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} required />
         <input type="text" placeholder="Description" value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
         <input type="datetime-local" value={newEvent.eventDate} onChange={(e) => setNewEvent({ ...newEvent, eventDate: e.target.value })} required />
@@ -347,11 +424,21 @@ const handleReject = (id) => {
         <input type="text" placeholder="Image URL" value={newEvent.image} onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })} />
         <input type="number" placeholder="Ticket Price" value={newEvent.ticketPrice} onChange={(e) => setNewEvent({ ...newEvent, ticketPrice: e.target.value })} required />
         <input type="number" placeholder="Total Tickets" value={newEvent.totalTickets} onChange={(e) => setNewEvent({ ...newEvent, totalTickets: e.target.value })} required />
-        <button type="submit">Create Event</button>
+        <button type="submit" style={{ padding: "10px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: 6, fontWeight: "bold", cursor: "pointer" }}>
+          Create Event
+        </button>
       </form>
     </div>
+  )}
+</div>
+
   </div>
 )}
+
+
+
+
+
 
       {/* System Admin Pending Approval */}
   {user?.role === "System Admin" && (
