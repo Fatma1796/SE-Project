@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,7 @@ function UpdateProfilePage() {
 
         try {
             await updateProfile({ name, email }); // Call updateProfile from context
-            toast.success('Profile updated successfully!');
+           // toast.success('Profile updated successfully!');
             navigate('/profile'); // Navigate back to profile page
         } catch (error) {
             toast.error(error.message || 'Failed to update profile');

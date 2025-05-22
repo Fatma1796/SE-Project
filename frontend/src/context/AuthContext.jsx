@@ -179,20 +179,23 @@ export function AuthProvider({ children }) {
         try {
             setLoading(true);
             setError(null);
-            
+
             const response = await userAPI.updateProfile(userData);
-            const updatedUser = response.data;
-            
+
+            // Fetch the latest profile from backend
+            const profileRes = await userAPI.getProfile();
+            const updatedUser = profileRes.data;
+
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
-            toast.success('Profile updated successfully!'); // <-- Add this line
-            window.location.reload();
-            navigate('/profile');
+
+            toast.success('Profile updated successfully!'); // <-- Toastify notification here
+
             return updatedUser;
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Profile update failed. Please try again.';
             setError(errorMessage);
-            toast.error(errorMessage); // <-- Optional: show error toast
+            toast.error(errorMessage);
             throw new Error(errorMessage);
         } finally {
             setLoading(false);
