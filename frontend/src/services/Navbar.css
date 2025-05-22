@@ -1,69 +1,72 @@
 .navbar {
-    background: linear-gradient(to right, #2c5282, #2b6cb0);
+    background: linear-gradient(to right, #1a365d, #2a4365, #2c5282);
     padding: 1rem 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
-    color: white !important;
+    color: #fff !important;
     font-size: 1.5rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
-.nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-    margin: 0 0.5rem;
-    padding: 0.5rem 1rem !important;
-    border-radius: 4px;
+.navbar-nav .nav-link {
+    color: #e2e8f0 !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
     transition: all 0.3s ease;
+    border-radius: 0.375rem;
+    margin: 0 0.25rem;
 }
 
-.nav-link:hover {
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
     background-color: rgba(255, 255, 255, 0.1);
-    color: white !important;
     transform: translateY(-1px);
 }
 
 .navbar-toggler {
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .btn-outline-danger {
-    color: white;
-    border: 2px solid #fc8181;
-    padding: 0.5rem 1.5rem;
-    border-radius: 4px;
-    font-weight: 500;
+    color: #fff;
+    border-color: #fc8181;
+    background-color: transparent;
+    padding: 0.5rem 1rem;
     transition: all 0.3s ease;
 }
 
 .btn-outline-danger:hover {
     background-color: #fc8181;
-    color: white;
+    border-color: #fc8181;
+    color: #fff;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(252, 129, 129, 0.2);
 }
 
-.navbar-nav {
-    align-items: center;
+.navbar-collapse {
+    justify-content: flex-end;
 }
 
 @media (max-width: 991.98px) {
-    .navbar-collapse {
-        background: #2c5282;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-top: 1rem;
+    .navbar-nav {
+        padding: 1rem 0;
     }
 
-    .nav-link {
-        padding: 0.75rem 1rem !important;
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
         margin: 0.25rem 0;
+    }
+
+    .btn-outline-danger {
+        margin: 0.5rem 1rem;
+        display: block;
+        text-align: center;
     }
 }

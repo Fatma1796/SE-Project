@@ -29,6 +29,7 @@ function App() {
       <AuthProvider>
         <Navbar />
         <div className="container mt-4">
+          
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
