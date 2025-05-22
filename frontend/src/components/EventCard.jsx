@@ -27,9 +27,7 @@ const EventCard = ({ event, onDelete }) => {
 
   const { date, time } = formatDateTime(event.eventDate);
 
-
- 
-   const handleDelete = async () => {
+const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       try {
         const token = localStorage.getItem('token');
@@ -47,59 +45,8 @@ const EventCard = ({ event, onDelete }) => {
       }
     }
   };
-
-// const handleDelete = () => {
-//   toast.info(
-//     <div className="delete-confirmation">
-//       <p>Are you sure you want to delete this event?</p>
-//       <div className="delete-actions">
-//         <button
-//           onClick={async () => {
-//             toast.dismiss();
-//             try {
-//               const token = localStorage.getItem('token');
-//               await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
-//                 headers: { Authorization: `Bearer ${token}` }
-//               });
-              
-//               if (onDelete) {
-//                 onDelete(eventId);
-//               }
-              
-//               toast.success('Event deleted successfully!', {
-//                 position: "top-center",
-//                 autoClose: 2000
-//               });
-//             } catch (err) {
-//               console.error('Delete failed:', err);
-//               toast.error('Failed to delete event', {
-//                 position: "top-center",
-//                 autoClose: 3000
-//               });
-//             }
-//           }}
-//           className="btn-confirm"
-//         >
-//           Yes
-//         </button>
-//         <button
-//           onClick={() => toast.dismiss()}
-//           className="btn-cancel"
-//         >
-//           No
-//         </button>
-//       </div>
-//     </div>,
-//     {
-//       position: "top-center",
-//       autoClose: false,
-//       closeOnClick: false,
-//       draggable: false,
-//       closeButton: false,
-//       className: 'delete-toast'
-//     }
-//   );
-// };
+ 
+ 
   return (
     <div className="event-card">
       <ToastContainer  enableMultiContainer 
