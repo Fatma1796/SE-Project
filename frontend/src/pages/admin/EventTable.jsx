@@ -21,9 +21,25 @@ const EventTable = ({ events }) => {
               <tr key={event._id || event.id}>
                 <td>{event._id || event.id}</td>
                 <td>{event.title}</td>
-                <td>{new Date(event.date).toLocaleDateString()}</td>
-                <td>{event.location}</td>
-                <td>{event.organizer?.name || 'Unknown'}</td>
+                <td>
+                  {(() => {
+                    // Try to parse the date
+                    const d = new Date(event.eventDate);
+                    return event.eventDate && !isNaN(d)
+                      ? d.toLocaleString(undefined, {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : 'Invalid date';
+                  })()}
+                </td>
+                <td>{event.location || 'N/A'}</td>
+                <td>
+                  {event.name}
+                </td>
                 <td>
                   <span className={`badge bg-${event.status === 'active' ? 'success' : 'secondary'}`}>
                     {event.status}
