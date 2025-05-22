@@ -42,7 +42,8 @@ function App() {
             <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
             <Route path="/update-profile" element={<PrivateRoute element={<UpdateProfilePage />} />} />
             <Route path="/my-bookings" element={<PrivateRoute element={<UserBookingsPage />} allowedRoles={['Standard User']} />} />
-            <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['admin']} />} />
+            {/* <Route path="/admin/*" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['System Admin']} />} /> */}
+            <Route path="/admin-dashboard" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={['System Admin']} />} /> 
             <Route path="/my-events" element={<PrivateRoute element={<MyEventsPage />} allowedRoles={['Organizer']} />} />
             <Route path="/my-events/analytics" element={<PrivateRoute element={<OrganizerAnalyticsPage />} allowedRoles={['Organizer']} />} />
             <Route path="/my-events/:id/edit" element={<PrivateRoute element={<EditEventPage />} allowedRoles={['Organizer']} />} />
