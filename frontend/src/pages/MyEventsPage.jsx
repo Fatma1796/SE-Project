@@ -1,10 +1,11 @@
 
        
-   import '../services/EventPage.css';
+import '../services/EventPage.css';
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
 import EventCard from '../components/EventCard';
+
 
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);

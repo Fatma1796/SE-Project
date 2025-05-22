@@ -4,15 +4,16 @@ import axios from 'axios';
 import UserTable from './UserTable';
 import EventTable from './EventTable';
 import { Tabs, Tab, Modal, Button, Toast, ToastContainer } from 'react-bootstrap';
+import { useLoading } from '../../context/LoadingContext';
+
 
 const AdminDashboard = () => {
     const { user } = useAuth();
     const [users, setUsers] = useState([]);
     const [events, setEvents] = useState([]);
-    const [loadingUsers, setLoadingUsers] = useState(false);
-    const [loadingEvents, setLoadingEvents] = useState(false);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('users'); // Default tab
+    const { startLoading, stopLoading } = useLoading();
     
     // View event modal state
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -20,7 +21,7 @@ const AdminDashboard = () => {
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     const fetchUsers = async () => {
-        setLoadingUsers(true);
+        startLoading('Loading users...');
         try {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('Missing authentication token');
@@ -32,12 +33,12 @@ const AdminDashboard = () => {
         } catch (error) {
             setError('Failed to load users. Please try again later.');
         } finally {
-            setLoadingUsers(false);
+            stopLoading();
         }
     };
 
     const fetchEvents = async () => {
-        setLoadingEvents(true);
+        startLoading('Loading events...');
         try {
             const response = await axios.get('/api/v1/events');
             setEvents(response.data || []);
@@ -45,14 +46,20 @@ const AdminDashboard = () => {
         } catch (error) {
             setError('Failed to load events. Please try again later.');
         } finally {
-            setLoadingEvents(false);
+            stopLoading();
         }
     };
 
     useEffect(() => {
         if (user?.role === 'System Admin') {
-            fetchUsers();
-            fetchEvents();
+            const loadData = async () => {
+                // First load users
+                await fetchUsers();
+                // Then load events
+                fetchEvents();
+            };
+            
+            loadData();
         }
     }, [user]);
 
@@ -153,23 +160,16 @@ const AdminDashboard = () => {
 
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} className="mb-3">
                 <Tab eventKey="users" title="Users">
-                    {loadingUsers ? (
-                        <div className="spinner-border text-center" role="status"></div>
-                    ) : (
-                        <UserTable users={users} onDelete={handleDeleteUser} onUpdateRole={handleUpdateUserRole} />
-                    )}
+                    <UserTable users={users} onDelete={handleDeleteUser} onUpdateRole={handleUpdateUserRole} />
                 </Tab>
                 <Tab eventKey="events" title="Events">
-                    {loadingEvents ? (
-                        <div className="spinner-border text-center" role="status"></div>
-                    ) : (
-                        <EventTable 
-                            events={events} 
-                            onView={handleViewEvent}
-                            onUpdate={handleUpdateEvent}
-                            onDelete={handleDeleteEvent}
-                        />
-                    )}
+                    <EventTable 
+                        events={events} 
+                        users={users}  // Pass the users data to EventTable
+                        onView={handleViewEvent}
+                        onUpdate={handleUpdateEvent}
+                        onDelete={handleDeleteEvent}
+                    />
                 </Tab>
             </Tabs>
 

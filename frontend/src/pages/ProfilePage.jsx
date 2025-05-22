@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 const ProfilePage = () => {
     const { user, role, loading: authLoading, updateProfile } = useAuth();
     const navigate = useNavigate();

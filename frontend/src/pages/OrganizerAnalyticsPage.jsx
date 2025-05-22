@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import EventAnalytics from '../components/EventAnalytics';
 
+
 const OrganizerAnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(true);

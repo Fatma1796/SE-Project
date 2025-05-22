@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
 import '../CSSmodules/HomePage.css';
 
+
 function HomePage() {
   const { user } = useContext(AuthContext);
   const [events, setEvents] = useState([]);

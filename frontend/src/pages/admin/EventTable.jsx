@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const EventTable = ({ events, onView, onUpdate, onDelete }) => {
+const EventTable = ({ events, users, onView, onUpdate, onDelete }) => {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({
     title: '',
@@ -51,6 +51,26 @@ const EventTable = ({ events, onView, onUpdate, onDelete }) => {
       location: '',
       status: ''
     });
+  };
+
+  // Function to get organizer name from users array
+  const getOrganizerName = (organizerId) => {
+    if (!organizerId) return 'Unknown organizer';
+    
+    // Look for the organizer in the users array
+    if (users && users.length > 0) {
+      const organizer = users.find(user => 
+        user._id === organizerId || 
+        user.id === organizerId
+      );
+      
+      if (organizer) {
+        return organizer.name;
+      }
+    }
+    
+    // If we have an organizerId but no matching user, show the ID
+    return `Organizer ID: ${organizerId}`;
   };
 
   return (
@@ -124,7 +144,15 @@ const EventTable = ({ events, onView, onUpdate, onDelete }) => {
                   )}
                 </td>
                 <td>
-                  {event.organizer?.name || event.organizerName || 'Unknown organizer'}
+                  {/* Enhanced organizer display logic */}
+                  {event.organizer?.name ? 
+                    event.organizer.name : 
+                    getOrganizerName(
+                      typeof event.organizer === 'string' 
+                        ? event.organizer 
+                        : event.organizer?._id || event.organizerId
+                    )
+                  }
                 </td>
                 <td>
                   {editingId === (event._id || event.id) ? (

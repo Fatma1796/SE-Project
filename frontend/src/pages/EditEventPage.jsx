@@ -1,73 +1,90 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useLoading } from '../context/LoadingContext';
 import '../services/EditEvent.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { startLoading, stopLoading } = useLoading();
+
+  const [event, setEvent] = useState({
+    title: '',
+    description: '',
+    eventDate: '',
+    location: '',
+    status: 'active'
+  });
 
   useEffect(() => {
     const fetchEvent = async () => {
+      if (!id) return;
+      
+      startLoading('Loading event details...');
       try {
-        if (!id) {
-          console.error('No event ID provided');
-          toast.error('No event ID provided');
-          navigate('/my-events');
-          return;
-        }
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/api/v1/events/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.get(`/api/v1/events/${id}`);
+        const eventData = response.data;
+        
+        // Format date for datetime-local input
+        const formattedDate = eventData.eventDate ? 
+          new Date(eventData.eventDate).toISOString().slice(0, 16) : '';
+        
+        setEvent({
+          ...eventData,
+          eventDate: formattedDate
         });
-        setEvent(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to fetch event:', err);
+      } catch (error) {
+        console.error('Error fetching event:', error);
         toast.error('Failed to load event details');
-        navigate('/my-events');
+      } finally {
+        stopLoading();
       }
     };
 
     fetchEvent();
-  }, [id, navigate]);
+  }, [id, startLoading, stopLoading]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEvent(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    startLoading('Saving changes...');
     try {
+      // Format the data for API
+      const eventData = {
+        ...event,
+        eventDate: new Date(event.eventDate).toISOString()
+      };
+      
       const token = localStorage.getItem('token');
-      await axios.put(
-        `http://localhost:3000/api/v1/events/${id}`,
-        event,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success('Event updated successfully!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+      await axios.put(`/api/v1/events/${id}`, eventData, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setTimeout(() => {
-        navigate('/my-events');
-      }, 1500);
-    } catch (err) {
-      console.error('Failed to update event:', err);
-      toast.error('Failed to update event');
+      
+      toast.success('Event updated successfully');
+      navigate('/events');
+    } catch (error) {
+      console.error('Error updating event:', error);
+      toast.error(error.response?.data?.message || 'Failed to update event');
+    } finally {
+      stopLoading();
     }
   };
 
-  if (loading) return <div className="loading-spinner">Loading...</div>;
-
+  // Component JSX
   return (
     <div className="edit-event-container">
-      <ToastContainer />
       <div className="edit-event-container">
         <h2 className="edit-event-title">Edit Event</h2>
         <form onSubmit={handleSubmit} className="edit-event-form">
@@ -75,8 +92,9 @@ const EditEventPage = () => {
             <label className="form-label">Title</label>
             <input
               type="text"
+              name="title"
               value={event.title}
-              onChange={e => setEvent({...event, title: e.target.value})}
+              onChange={handleChange}
               className="form-input"
               required
             />
@@ -84,8 +102,9 @@ const EditEventPage = () => {
           <div className="form-group">
             <label className="form-label">Description</label>
             <textarea
+              name="description"
               value={event.description}
-              onChange={e => setEvent({...event, description: e.target.value})}
+              onChange={handleChange}
               className="form-input form-textarea"
             />
           </div>
@@ -93,8 +112,9 @@ const EditEventPage = () => {
             <label className="form-label">Date</label>
             <input
               type="datetime-local"
-              value={event.eventDate?.slice(0, 16)}
-              onChange={e => setEvent({...event, eventDate: e.target.value})}
+              name="eventDate"
+              value={event.eventDate}
+              onChange={handleChange}
               className="form-input"
               required
             />
@@ -103,28 +123,9 @@ const EditEventPage = () => {
             <label className="form-label">Location</label>
             <input
               type="text"
+              name="location"
               value={event.location}
-              onChange={e => setEvent({...event, location: e.target.value})}
-              className="form-input"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Price</label>
-            <input
-              type="number"
-              value={event.ticketPrice}
-              onChange={e => setEvent({...event, ticketPrice: e.target.value})}
-              className="form-input"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Total Tickets</label>
-            <input
-              type="number"
-              value={event.totalTickets}
-              onChange={e => setEvent({...event, totalTickets: e.target.value})}
+              onChange={handleChange}
               className="form-input"
               required
             />

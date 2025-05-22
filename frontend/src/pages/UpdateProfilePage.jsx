@@ -1,37 +1,36 @@
-
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useLoading } from '../context/LoadingContext';
 
 function UpdateProfilePage() {
-    const { user, updateProfile } = useAuth(); // Access user and updateProfile from context
+    const { user, updateProfile } = useAuth();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
+    const { startLoading, stopLoading } = useLoading();
 
     const navigate = useNavigate();
 
-    // Sync local state with global user state
     useEffect(() => {
         if (user) {
             setName(user.name || '');
             setEmail(user.email || '');
         }
-    }, [user]); // Re-run this whenever the user state changes
+    }, [user]);
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        startLoading('Updating profile...');
 
         try {
-            await updateProfile({ name, email }); // Call updateProfile from context
-           // toast.success('Profile updated successfully!');
-            navigate('/profile'); // Navigate back to profile page
+            await updateProfile({ name, email });
+            toast.success('Profile updated successfully!');
+            navigate('/profile');
         } catch (error) {
             toast.error(error.message || 'Failed to update profile');
         } finally {
-            setLoading(false);
+            stopLoading();
         }
     };
 
@@ -67,9 +66,8 @@ function UpdateProfilePage() {
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={loading}
                     >
-                        {loading ? 'Updating...' : 'Confirm Update'}
+                        Confirm Update
                     </button>
                 </form>
             </div>
