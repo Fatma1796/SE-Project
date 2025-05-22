@@ -69,7 +69,7 @@ function UpdateProfilePage() {
                         className="btn btn-primary"
                         disabled={loading}
                     >
-                        {loading ? 'Updating...' : 'Update Profile'}
+                        {loading ? 'Updating...' : 'Confirm Update'}
                     </button>
                 </form>
             </div>
