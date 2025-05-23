@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-//import '../../services/Navbar.css';  // Add this import
+import '../../services/Navbar.css';  // Uncomment this import
 
 function Navbar() {
     const { user, logout } = useAuth();
@@ -67,7 +67,7 @@ function Navbar() {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg navbar-dark custom-navbar">
             <div className="container">
                 <Link className="navbar-brand" to="/">Event Ticketing</Link>
                 <button 

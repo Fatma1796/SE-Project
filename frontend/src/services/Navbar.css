@@ -11,6 +11,25 @@
     letter-spacing: 0.05em;
 }
 
+.custom-navbar {
+  background-color: #333; /* This should match your footer's background color */
+  color: white;
+}
+
+/* Optional: Style the navbar links to match the footer's link style */
+.custom-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.custom-navbar .nav-link:hover {
+  color: white;
+}
+
+.custom-navbar .navbar-brand {
+  color: white;
+  font-weight: bold;
+}
+
 .navbar-nav .nav-link {
     color: #e2e8f0 !important;
     font-weight: 500;
