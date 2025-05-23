@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 // filepath: c:\Users\fosam\OneDrive\Desktop\Uni\Semester 4\Software Engineering\SE-Project-1\frontend\src\components\common\FullPageSpinner.jsx
+=======
+>>>>>>> main
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
 import './LoadingSpinner.css';
