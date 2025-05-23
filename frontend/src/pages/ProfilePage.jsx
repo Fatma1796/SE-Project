@@ -4,26 +4,39 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import FullPageSpinner from '../components/common/FullPageSpinner';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import '../CSSmodules/HomePage.css'; 
 
 const ProfilePage = () => {
     const { user, role, loading: authLoading } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-
-    // Toast notification effect
+    
+    // Toast notification effect - Move this before other useEffects to ensure it runs first
     useEffect(() => {
+        // Check if we have the profileUpdated flag in the location state
         if (location.state?.profileUpdated) {
-            toast.success('Profile updated successfully!');
-            // Delay clearing the state so the toast can appear
+            // Use setTimeout to ensure the toast appears after render
+            setTimeout(() => {
+                toast.success('Profile updated successfully!', {
+                    position: "top-right", // Changed to top-right for better visibility
+                    autoClose: 5000, // Extended duration to make sure it's visible
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    toastId: 'profile-updated' // Add unique ID to prevent duplicate toasts
+                });
+            }, 100);
+            
+            // Clear the state after displaying toast
             setTimeout(() => {
                 navigate(location.pathname, { replace: true, state: {} });
-            }, 300);
+            }, 500);
         }
-        // Only depend on location.state to avoid multiple toasts
-        // eslint-disable-next-line
-    }, [location.state]);
+    }, [location.state, navigate, location.pathname]);
 
     // Profile state
     const [name, setName] = useState('');
@@ -61,7 +74,18 @@ const ProfilePage = () => {
 
     return (
         <div className="container mt-4">
-            <ToastContainer position="top-right" autoClose={3000} />
+            {/* Place ToastContainer at the top level with explicit props */}
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <div className="card">
                 <div className="card-header">
                     <h1>My Profile</h1>
