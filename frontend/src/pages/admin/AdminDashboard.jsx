@@ -3,83 +3,98 @@ import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import UserTable from './UserTable';
 import EventTable from './EventTable';
-import { Tabs, Tab, Modal, Button, Toast, ToastContainer } from 'react-bootstrap';
+import { Tabs, Tab, Modal, Button } from 'react-bootstrap';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import FullPageSpinner from '../../components/common/FullPageSpinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../CSSmodules/HomePage.css'; // Contains .custom-toast if you use it
 
 const AdminDashboard = () => {
     const { user } = useAuth();
     const [users, setUsers] = useState([]);
     const [events, setEvents] = useState([]);
-    const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('users'); // Default tab
+    const [error, setError] = useState(null); // For general page errors, not toasts
+    const [activeTab, setActiveTab] = useState('users');
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
     
-    // View event modal state
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
-    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    // Consistent toast notification function
+    const showToastNotification = (message, type, actionKey) => {
+        const options = {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            className: 'custom-toast', // Apply custom class from HomePage.css
+            toastId: `${actionKey}-${type}` // Prevents duplicate toasts for the same action-type
+        };
+
+        if (type === 'success') {
+            toast.success(message, options);
+        } else {
+            toast.error(message, options);
+        }
+    };
 
     const fetchUsers = async () => {
-        setLoading(true);
+        // setLoading(true); // Already handled by main loading state if needed
         try {
             const token = localStorage.getItem('token');
-            if (!token) throw new Error('Missing authentication token');
             const response = await axios.get('/api/v1/users', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUsers(response.data.users || []);
-            setError(null);
-        } catch (error) {
-            setError('Failed to load users. Please try again later.');
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            setError('Failed to load users.'); // Page level error
+            showToastNotification('Failed to load users.', 'error', 'fetch-users');
         }
+        // setLoading(false);
     };
 
     const fetchEvents = async () => {
-        setLoading(true);
+        // setLoading(true);
         try {
             const response = await axios.get('/api/v1/events');
             setEvents(response.data || []);
-            setError(null);
-        } catch (error) {
-            setError('Failed to load events. Please try again later.');
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            setError('Failed to load events.'); // Page level error
+            showToastNotification('Failed to load events.', 'error', 'fetch-events');
         }
+        // setLoading(false);
     };
 
     useEffect(() => {
-        if (user?.role === 'System Admin') {
-            const loadData = async () => {
-                // First load users
-                await fetchUsers();
-                // Then load events
-                fetchEvents();
-            };
-            
-            loadData();
-        }
+        const loadData = async () => {
+            setLoading(true);
+            if (user?.role === 'System Admin') {
+                await fetchUsers(); // await to ensure users are fetched before events if there's a dependency
+                await fetchEvents();
+            }
+            setLoading(false);
+        };
+        loadData();
     }, [user]);
 
     const handleDeleteUser = async (userId) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
-            setProcessing(true);
-            try {
-                const token = localStorage.getItem('token');
-                await axios.delete(`/api/v1/users/${userId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                fetchUsers();
-                showToast('User deleted successfully', 'success');
-            } catch (error) {
-                setError('Failed to delete user. Please try again.');
-                showToast('Failed to delete user', 'danger');
-            } finally {
-                setProcessing(false);
-            }
+        // Removed window.confirm for direct deletion
+        setProcessing(true);
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`/api/v1/users/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            await fetchUsers(); // Refresh user list
+            showToastNotification('User deleted successfully.', 'success', 'delete-user');
+        } catch (err) {
+            showToastNotification('Failed to delete user.', 'error', 'delete-user');
+        } finally {
+            setProcessing(false);
         }
     };
 
@@ -90,17 +105,15 @@ const AdminDashboard = () => {
             await axios.put(`/api/v1/users/${userId}`, { role: newRole }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            fetchUsers();
-            showToast('User role updated successfully', 'success');
-        } catch (error) {
-            setError('Failed to update user role. Please try again.');
-            showToast('Failed to update user role', 'danger');
+            await fetchUsers(); // Refresh user list
+            showToastNotification('User role updated successfully.', 'success', 'update-user-role');
+        } catch (err) {
+            showToastNotification('Failed to update user role.', 'error', 'update-user-role');
         } finally {
             setProcessing(false);
         }
     };
-
-    // Event handling functions
+    
     const handleViewEvent = (eventId) => {
         const event = events.find(e => e._id === eventId || e.id === eventId);
         setSelectedEvent(event);
@@ -114,38 +127,30 @@ const AdminDashboard = () => {
             await axios.put(`/api/v1/events/${eventId}`, updatedData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            fetchEvents();
-            showToast('Event updated successfully', 'success');
-        } catch (error) {
-            console.error('Error updating event:', error);
-            showToast('Failed to update event', 'danger');
+            await fetchEvents(); // Refresh event list
+            showToastNotification('Event updated successfully.', 'success', 'update-event');
+        } catch (err) {
+            showToastNotification('Failed to update event.', 'error', 'update-event');
         } finally {
             setProcessing(false);
         }
     };
 
     const handleDeleteEvent = async (eventId) => {
-        if (window.confirm('Are you sure you want to delete this event?')) {
-            setProcessing(true);
-            try {
-                const token = localStorage.getItem('token');
-                await axios.delete(`/api/v1/events/${eventId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                fetchEvents();
-                showToast('Event deleted successfully', 'success');
-            } catch (error) {
-                console.error('Error deleting event:', error);
-                showToast('Failed to delete event', 'danger');
-            } finally {
-                setProcessing(false);
-            }
+        // Removed window.confirm for direct deletion
+        setProcessing(true);
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`/api/v1/events/${eventId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            await fetchEvents(); // Refresh event list
+            showToastNotification('Event deleted successfully.', 'success', 'delete-event');
+        } catch (err) {
+            showToastNotification('Failed to delete event.', 'error', 'delete-event');
+        } finally {
+            setProcessing(false);
         }
-    };
-
-    const showToast = (message, type = 'success') => {
-        setToast({ show: true, message, type });
-        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
     };
 
     if (loading) return <FullPageSpinner text="Loading dashboard data..." />;
@@ -155,28 +160,23 @@ const AdminDashboard = () => {
 
     return (
         <div className="container mt-4">
+            {/* ToastContainer should be rendered once, at a high level */}
+            <ToastContainer
+                position="top-right"
+                autoClose={3000} // Default autoClose, can be overridden by individual toasts
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+
             <h1 className="mb-4">Admin Dashboard</h1>
-            {error && <div className="alert alert-danger">{error}</div>}
+            {error && <div className="alert alert-danger mt-3">{error}</div>} {/* Display page-level errors */}
             {processing && <div className="text-center py-3"><LoadingSpinner size="medium" text="Processing..." /></div>}
             
-            {/* Toast notification */}
-            <ToastContainer position="top-end" className="p-3">
-                <Toast 
-                    bg={toast.type}
-                    show={toast.show} 
-                    onClose={() => setToast({...toast, show: false})}
-                    delay={3000}
-                    autohide
-                >
-                    <Toast.Header>
-                        <strong className="me-auto">Notification</strong>
-                    </Toast.Header>
-                    <Toast.Body className={toast.type === 'success' ? 'text-white' : ''}>
-                        {toast.message}
-                    </Toast.Body>
-                </Toast>
-            </ToastContainer>
-
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} className="mb-3">
                 <Tab eventKey="users" title="Users">
                     <UserTable 
@@ -189,7 +189,7 @@ const AdminDashboard = () => {
                 <Tab eventKey="events" title="Events">
                     <EventTable 
                         events={events} 
-                        users={users}  // Pass the users data to EventTable
+                        users={users}
                         onView={handleViewEvent}
                         onUpdate={handleUpdateEvent}
                         onDelete={handleDeleteEvent}
@@ -198,7 +198,6 @@ const AdminDashboard = () => {
                 </Tab>
             </Tabs>
 
-            {/* View Event Modal */}
             <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Event Details</Modal.Title>
