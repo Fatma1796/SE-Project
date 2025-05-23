@@ -4,8 +4,8 @@ import axios from 'axios';
 import UserTable from './UserTable';
 import EventTable from './EventTable';
 import { Tabs, Tab, Modal, Button, Toast, ToastContainer } from 'react-bootstrap';
-import { useLoading } from '../../context/LoadingContext';
-
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import FullPageSpinner from '../../components/common/FullPageSpinner';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
@@ -13,7 +13,8 @@ const AdminDashboard = () => {
     const [events, setEvents] = useState([]);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('users'); // Default tab
-    const { startLoading, stopLoading } = useLoading();
+    const [loading, setLoading] = useState(true);
+    const [processing, setProcessing] = useState(false);
     
     // View event modal state
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -21,7 +22,7 @@ const AdminDashboard = () => {
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     const fetchUsers = async () => {
-        startLoading('Loading users...');
+        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('Missing authentication token');
@@ -33,12 +34,12 @@ const AdminDashboard = () => {
         } catch (error) {
             setError('Failed to load users. Please try again later.');
         } finally {
-            stopLoading();
+            setLoading(false);
         }
     };
 
     const fetchEvents = async () => {
-        startLoading('Loading events...');
+        setLoading(true);
         try {
             const response = await axios.get('/api/v1/events');
             setEvents(response.data || []);
@@ -46,7 +47,7 @@ const AdminDashboard = () => {
         } catch (error) {
             setError('Failed to load events. Please try again later.');
         } finally {
-            stopLoading();
+            setLoading(false);
         }
     };
 
@@ -65,27 +66,37 @@ const AdminDashboard = () => {
 
     const handleDeleteUser = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
+            setProcessing(true);
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`/api/v1/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 fetchUsers();
+                showToast('User deleted successfully', 'success');
             } catch (error) {
                 setError('Failed to delete user. Please try again.');
+                showToast('Failed to delete user', 'danger');
+            } finally {
+                setProcessing(false);
             }
         }
     };
 
     const handleUpdateUserRole = async (userId, newRole) => {
+        setProcessing(true);
         try {
             const token = localStorage.getItem('token');
             await axios.put(`/api/v1/users/${userId}`, { role: newRole }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             fetchUsers();
+            showToast('User role updated successfully', 'success');
         } catch (error) {
             setError('Failed to update user role. Please try again.');
+            showToast('Failed to update user role', 'danger');
+        } finally {
+            setProcessing(false);
         }
     };
 
@@ -97,6 +108,7 @@ const AdminDashboard = () => {
     };
 
     const handleUpdateEvent = async (eventId, updatedData) => {
+        setProcessing(true);
         try {
             const token = localStorage.getItem('token');
             await axios.put(`/api/v1/events/${eventId}`, updatedData, {
@@ -107,11 +119,14 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error('Error updating event:', error);
             showToast('Failed to update event', 'danger');
+        } finally {
+            setProcessing(false);
         }
     };
 
     const handleDeleteEvent = async (eventId) => {
         if (window.confirm('Are you sure you want to delete this event?')) {
+            setProcessing(true);
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`/api/v1/events/${eventId}`, {
@@ -122,6 +137,8 @@ const AdminDashboard = () => {
             } catch (error) {
                 console.error('Error deleting event:', error);
                 showToast('Failed to delete event', 'danger');
+            } finally {
+                setProcessing(false);
             }
         }
     };
@@ -131,6 +148,7 @@ const AdminDashboard = () => {
         setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
     };
 
+    if (loading) return <FullPageSpinner text="Loading dashboard data..." />;
     if (!user || user.role !== 'System Admin') {
         return <div className="alert alert-danger">You do not have permission to access this page.</div>;
     }
@@ -139,6 +157,7 @@ const AdminDashboard = () => {
         <div className="container mt-4">
             <h1 className="mb-4">Admin Dashboard</h1>
             {error && <div className="alert alert-danger">{error}</div>}
+            {processing && <div className="text-center py-3"><LoadingSpinner size="medium" text="Processing..." /></div>}
             
             {/* Toast notification */}
             <ToastContainer position="top-end" className="p-3">
@@ -160,7 +179,12 @@ const AdminDashboard = () => {
 
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} className="mb-3">
                 <Tab eventKey="users" title="Users">
-                    <UserTable users={users} onDelete={handleDeleteUser} onUpdateRole={handleUpdateUserRole} />
+                    <UserTable 
+                        users={users} 
+                        onDelete={handleDeleteUser} 
+                        onUpdateRole={handleUpdateUserRole}
+                        processing={processing} 
+                    />
                 </Tab>
                 <Tab eventKey="events" title="Events">
                     <EventTable 
@@ -169,6 +193,7 @@ const AdminDashboard = () => {
                         onView={handleViewEvent}
                         onUpdate={handleUpdateEvent}
                         onDelete={handleDeleteEvent}
+                        processing={processing}
                     />
                 </Tab>
             </Tabs>

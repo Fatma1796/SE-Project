@@ -3,14 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useLoading } from '../context/LoadingContext';
 import '../services/EditEvent.css';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import FullPageSpinner from '../components/common/FullPageSpinner';
 
 const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { startLoading, stopLoading } = useLoading();
+  const [pageLoading, setPageLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [event, setEvent] = useState({
     title: '',
@@ -24,7 +26,7 @@ const EditEventPage = () => {
     const fetchEvent = async () => {
       if (!id) return;
       
-      startLoading('Loading event details...');
+      setPageLoading(true);
       try {
         const response = await axios.get(`/api/v1/events/${id}`);
         const eventData = response.data;
@@ -41,12 +43,12 @@ const EditEventPage = () => {
         console.error('Error fetching event:', error);
         toast.error('Failed to load event details');
       } finally {
-        stopLoading();
+        setPageLoading(false);
       }
     };
 
     fetchEvent();
-  }, [id, startLoading, stopLoading]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +61,7 @@ const EditEventPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    startLoading('Saving changes...');
+    setSaving(true);
     try {
       // Format the data for API
       const eventData = {
@@ -78,9 +80,11 @@ const EditEventPage = () => {
       console.error('Error updating event:', error);
       toast.error(error.response?.data?.message || 'Failed to update event');
     } finally {
-      stopLoading();
+      setSaving(false);
     }
   };
+
+  if (pageLoading) return <FullPageSpinner text="Loading event data..." />;
 
   // Component JSX
   return (
@@ -97,6 +101,7 @@ const EditEventPage = () => {
               onChange={handleChange}
               className="form-input"
               required
+              disabled={saving}
             />
           </div>
           <div className="form-group">
@@ -106,6 +111,7 @@ const EditEventPage = () => {
               value={event.description}
               onChange={handleChange}
               className="form-input form-textarea"
+              disabled={saving}
             />
           </div>
           <div className="form-group">
@@ -117,6 +123,7 @@ const EditEventPage = () => {
               onChange={handleChange}
               className="form-input"
               required
+              disabled={saving}
             />
           </div>
           <div className="form-group">
@@ -128,16 +135,18 @@ const EditEventPage = () => {
               onChange={handleChange}
               className="form-input"
               required
+              disabled={saving}
             />
           </div>
           <div className="button-group">
-            <button type="submit" className="save-button">
-              Save Changes
+            <button type="submit" className="save-button" disabled={saving}>
+              {saving ? <LoadingSpinner size="small" text="Saving..." /> : 'Save Changes'}
             </button>
             <button
               type="button"
               onClick={() => navigate('/my-events')}
               className="cancel-button"
+              disabled={saving}
             >
               Cancel
             </button>

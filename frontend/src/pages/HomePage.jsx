@@ -2,13 +2,16 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer,toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import '../CSSmodules/HomePage.css';
-
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import FullPageSpinner from '../components/common/FullPageSpinner';
 
 function HomePage() {
   const { user } = useContext(AuthContext);
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: "",
     description: "",
@@ -38,6 +41,7 @@ function HomePage() {
       url = "http://localhost:3000/api/v1/events/all";
     }
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const res = await axios.get(url, {
           headers: user?.role === "System Admin"
@@ -47,6 +51,8 @@ function HomePage() {
         setEvents(res.data);
       } catch (err) {
         console.error("Failed to fetch events", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchEvents();
@@ -55,6 +61,7 @@ function HomePage() {
   // Add event handler
   const handleAddEvent = (e) => {
     e.preventDefault();
+    setSubmitting(true);
     axios
       .post(
         "http://localhost:3000/api/v1/events",
@@ -63,16 +70,16 @@ function HomePage() {
       )
       .then(() => {
         toast.success('Event added successfully!', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        className: 'custom-toast'});
-        // alert("Event added!");
-        setShowAddEventForm(false); // <-- Close the form here!
-      setNewEvent({
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          className: 'custom-toast'
+        });
+        setShowAddEventForm(false);
+        setNewEvent({
           title: "",
           description: "",
           eventDate: "",
@@ -85,10 +92,13 @@ function HomePage() {
       })
       .catch((err) => {
         console.error("Add event failed", err);
-              toast.error('Failed to add event. Please try again.', {
- position: "top-center",
-        autoClose: 3000
-              });
+        toast.error('Failed to add event. Please try again.', {
+          position: "top-center",
+          autoClose: 3000
+        });
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
   };
 
@@ -135,11 +145,13 @@ const handleReject = (id) => {
     });
 };
 
+  if (loading) return <FullPageSpinner text="Loading events..." />;
+
   return (
     <div style={{ padding: "20px" }}>
-          <ToastContainer />
-
-     {/* This will ensure the event list is only visible to public users and Standard Users, not to Organizers or System Admins. */}
+      <ToastContainer />
+      
+      {/* This will ensure the event list is only visible to public users and Standard Users, not to Organizers or System Admins. */}
   {(!user || user.role === "Standard User") && (
   <div className="home-container">
     <h1 className="welcome-title">Welcome to the Online Event Ticketing System</h1>
@@ -424,8 +436,8 @@ const handleReject = (id) => {
         <input type="text" placeholder="Image URL" value={newEvent.image} onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })} />
         <input type="number" placeholder="Ticket Price" value={newEvent.ticketPrice} onChange={(e) => setNewEvent({ ...newEvent, ticketPrice: e.target.value })} required />
         <input type="number" placeholder="Total Tickets" value={newEvent.totalTickets} onChange={(e) => setNewEvent({ ...newEvent, totalTickets: e.target.value })} required />
-        <button type="submit" style={{ padding: "10px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: 6, fontWeight: "bold", cursor: "pointer" }}>
-          Create Event
+        <button type="submit" style={{ padding: "10px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: 6, fontWeight: "bold", cursor: "pointer" }} disabled={submitting}>
+          {submitting ? <LoadingSpinner size="small" text="" /> : 'Create Event'}
         </button>
       </form>
     </div>

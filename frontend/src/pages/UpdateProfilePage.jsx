@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useLoading } from '../context/LoadingContext';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import FullPageSpinner from '../components/common/FullPageSpinner';
 
 function UpdateProfilePage() {
     const { user, updateProfile } = useAuth();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const { startLoading, stopLoading } = useLoading();
+    const [loading, setLoading] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -16,12 +18,13 @@ function UpdateProfilePage() {
         if (user) {
             setName(user.name || '');
             setEmail(user.email || '');
+            setPageLoading(false);
         }
     }, [user]);
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
-        startLoading('Updating profile...');
+        setLoading(true);
 
         try {
             await updateProfile({ name, email });
@@ -30,9 +33,13 @@ function UpdateProfilePage() {
         } catch (error) {
             toast.error(error.message || 'Failed to update profile');
         } finally {
-            stopLoading();
+            setLoading(false);
         }
     };
+
+    if (pageLoading) {
+        return <FullPageSpinner text="Loading profile data..." />;
+    }
 
     return (
         <div className="card">
@@ -50,6 +57,7 @@ function UpdateProfilePage() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
+                            disabled={loading}
                         />
                     </div>
                     <div className="mb-3">
@@ -61,13 +69,15 @@ function UpdateProfilePage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            disabled={loading}
                         />
                     </div>
                     <button
                         type="submit"
                         className="btn btn-primary"
+                        disabled={loading}
                     >
-                        Confirm Update
+                        {loading ? <LoadingSpinner size="small" text="Updating..." /> : 'Confirm Update'}
                     </button>
                 </form>
             </div>

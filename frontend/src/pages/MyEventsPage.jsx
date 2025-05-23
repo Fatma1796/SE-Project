@@ -1,18 +1,19 @@
-
-       
 import '../services/EventPage.css';
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
 import EventCard from '../components/EventCard';
-
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import FullPageSpinner from '../components/common/FullPageSpinner';
 
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchMyEvents = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem('token');
         
@@ -31,6 +32,8 @@ const MyEventsPage = () => {
         setEvents(eventsData);
       } catch (err) {
         console.error('Failed to load events:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -43,8 +46,9 @@ const MyEventsPage = () => {
     setEvents(events.filter(event => (event._id || event.eventId || event.id) !== eventId));
   };
 
+  if (loading) return <FullPageSpinner text="Loading your events..." />;
 
-return (
+  return (
     <div className="event-page">
       <h2 className="event-title">My Events</h2>
       {events.length === 0 ? (
@@ -62,8 +66,6 @@ return (
       )}
     </div>
   );
-
 };
-
 
 export default MyEventsPage;

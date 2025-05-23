@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
-const EventTable = ({ events, users, onView, onUpdate, onDelete }) => {
+const EventTable = ({ events, users, onView, onUpdate, onDelete, processing }) => {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({
     title: '',
@@ -205,8 +206,9 @@ const EventTable = ({ events, users, onView, onUpdate, onDelete }) => {
                       <button 
                         className="btn btn-sm btn-danger"
                         onClick={() => onDelete(event._id || event.id)}
+                        disabled={processing}
                       >
-                        Delete
+                        {processing ? <LoadingSpinner size="small" text="" /> : 'Delete'}
                       </button>
                     </>
                   )}

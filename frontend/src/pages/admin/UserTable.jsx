@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
-const UserTable = ({ users, onDelete, onUpdateRole }) => {
+const UserTable = ({ users, onDelete, onUpdateRole, processing }) => {
   const [editingId, setEditingId] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
 
@@ -69,8 +69,9 @@ const UserTable = ({ users, onDelete, onUpdateRole }) => {
                       <button 
                         className="btn btn-sm btn-success me-1" 
                         onClick={() => saveRoleChange(user._id)}
+                        disabled={processing}
                       >
-                        Save
+                        {processing ? <LoadingSpinner size="small" text="" /> : 'Save'}
                       </button>
                       <button 
                         className="btn btn-sm btn-secondary" 
@@ -84,14 +85,16 @@ const UserTable = ({ users, onDelete, onUpdateRole }) => {
                       <button 
                         className="btn btn-sm btn-primary me-1" 
                         onClick={() => startEditing(user)}
+                        disabled={processing}
                       >
-                        Edit Role
+                        {processing ? <LoadingSpinner size="small" text="" /> : 'Edit Role'}
                       </button>
                       <button 
                         className="btn btn-sm btn-danger" 
                         onClick={() => onDelete(user._id)}
+                        disabled={processing}
                       >
-                        Delete
+                        {processing ? <LoadingSpinner size="small" text="" /> : 'Delete'}
                       </button>
                     </>
                   )}
