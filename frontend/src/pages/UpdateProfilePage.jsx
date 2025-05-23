@@ -28,8 +28,8 @@ function UpdateProfilePage() {
 
         try {
             await updateProfile({ name, email });
-            toast.success('Profile updated successfully!');
-            navigate('/profile');
+            // Pass state indicating successful update
+            navigate('/profile', { state: { profileUpdated: true } });
         } catch (error) {
             toast.error(error.message || 'Failed to update profile');
         } finally {

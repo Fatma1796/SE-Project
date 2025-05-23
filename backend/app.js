@@ -66,15 +66,27 @@ app.use("/api/v1", eventRouter);
 //app.use("/api/v1/users", userRouter);
 
 const db_name = process.env.DB_NAME;
+// MongoDB Atlas Connection
+mongoose.connect(process.env.DB_URL + process.env.DB_NAME, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,  // Timeout after 5s if no server is selected
+  socketTimeoutMS: 45000          // Close sockets after 45s of inactivity
+})
+.then(() => console.log("✅ MongoDB Atlas connected successfully"))
+.catch((err) => {
+  console.error(" MongoDB connection error:", err);
+  process.exit(1); // Exit the process if connection fails
+});
 
-//const db_url = `${process.env.DB_URL}/${db_name}`;
-const db_url = "mongodb://localhost:27017/Schema";
-mongoose
-  .connect(db_url)
-  .then(() => console.log("mongoDB connected"))
-  .catch((e) => {
-    console.log(e);
-  });
+// //const db_url = `${process.env.DB_URL}/${db_name}`;
+// const db_url = "mongodb://localhost:27017/Schema";
+// mongoose
+//   .connect(db_url)
+//   .then(() => console.log("mongoDB connected"))
+//   .catch((e) => {
+//     console.log(e);
+//   });
 
 app.use(function (req, res, next) {
   return res.status(404).send("404");
