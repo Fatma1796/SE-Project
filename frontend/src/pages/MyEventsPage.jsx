@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import EventCard from '../components/EventCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import FullPageSpinner from '../components/common/FullPageSpinner';
+import {  toast ,ToastContainer} from 'react-toastify';
 
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -44,7 +45,18 @@ const MyEventsPage = () => {
 
   const handleDelete = (eventId) => {
     setEvents(events.filter(event => (event._id || event.eventId || event.id) !== eventId));
-  };
+  //   toast.success('Event deleted successfully!', {
+  //   className: 'custom-toast', // This class should be defined in homepage.css
+  //   position: 'top-right',
+  //   autoClose: 3000,
+  //   hideProgressBar: false,
+  //   closeOnClick: true,
+  //   pauseOnHover: true,
+  //   draggable: true,
+  //   progress: undefined,
+  // });
+};
+  
 
   if (loading) return <FullPageSpinner text="Loading your events..." />;
 
@@ -62,8 +74,10 @@ const MyEventsPage = () => {
               onDelete={handleDelete}
             />
           ))}
+       
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };

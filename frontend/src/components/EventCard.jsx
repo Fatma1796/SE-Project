@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {  toast ,ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import '../CSSmodules/HomePage.css';
 const EventCard = ({ event, onDelete }) => {
   const navigate = useNavigate();
   const eventId = event._id || event.eventId || event.id;
@@ -27,25 +27,55 @@ const EventCard = ({ event, onDelete }) => {
 
   const { date, time } = formatDateTime(event.eventDate);
 
-const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+// const handleDelete = async () => {
+//     if (window.confirm('Are you sure you want to delete this event?')) {
+//       try {
+//         const token = localStorage.getItem('token');
+//         await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
+//           headers: { Authorization: `Bearer ${token}` }
+//         });
         
-        // Call onDelete only after successful deletion
-        if (onDelete) {
-          onDelete(eventId);
-        }
-      } catch (err) {
-        console.error('Delete failed:', err);
-        alert('Failed to delete event');
-      }
+//         // Call onDelete only after successful deletion
+//         if (onDelete) {
+//           onDelete(eventId);
+//         }
+//       } catch (err) {
+//         console.error('Delete failed:', err);
+//         alert('Failed to delete event');
+//       }
+//     }
+//   };
+ const handleDelete = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.delete(`http://localhost:3000/api/v1/events/${eventId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    toast.success('Event deleted successfully', {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      className: 'custom-toast',
+            toastId: 'event-delete-success'
+
+    });
+    if (onDelete) {
+      onDelete(eventId);
     }
-  };
- 
+  } catch (err) {
+    console.error('Delete failed:', err);
+    toast.error('Failed to delete event', {
+      position: "top-center",
+      autoClose: 3000,
+      className: 'custom-toast',
+            toastId: 'event-delete-error'
+
+    });
+  }
+};
  
   return (
     <div className="event-card">

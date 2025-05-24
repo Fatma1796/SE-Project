@@ -65,6 +65,23 @@ app.use("/api/v1", eventRouter);
 //app.use(authenticationMiddleware);
 //app.use("/api/v1/users", userRouter);
 
+// mongoose.connect(process.env.DB_URL, {
+//   serverSelectionTimeoutMS: 5000,
+//   socketTimeoutMS: 45000
+// })
+// .then(() => console.log("MongoDB Atlas connected successfully"))
+// .catch((err) => {
+//   console.error("MongoDB connection error:", err);
+  
+//   // Try fallback to local MongoDB
+//   console.log("Attempting to connect to local MongoDB...");
+//   mongoose.connect("mongodb://localhost:27017/")
+//     .then(() => console.log("Connected to local MongoDB"))
+//     .catch((localErr) => {
+//       console.error("Local MongoDB connection failed:", localErr);
+//       process.exit(1);
+//     });
+// });
 mongoose.connect(process.env.DB_URL, {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000
@@ -72,15 +89,7 @@ mongoose.connect(process.env.DB_URL, {
 .then(() => console.log("MongoDB Atlas connected successfully"))
 .catch((err) => {
   console.error("MongoDB connection error:", err);
-  
-  // Try fallback to local MongoDB
-  console.log("Attempting to connect to local MongoDB...");
-  mongoose.connect("mongodb://localhost:27017/")
-    .then(() => console.log("Connected to local MongoDB"))
-    .catch((localErr) => {
-      console.error("Local MongoDB connection failed:", localErr);
-      process.exit(1);
-    });
+  process.exit(1);
 });
 
 // //const db_url = `${process.env.DB_URL}/${db_name}`;
