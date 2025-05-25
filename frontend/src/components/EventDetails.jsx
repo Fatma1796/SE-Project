@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast,ToastContainer } from 'react-toastify';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../CSSmodules/EventDetails.css';
+import '../CSSmodules/HomePage.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 const EventDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,33 +32,43 @@ const EventDetails = () => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
       .then(res => {
+        toast.success("Booked successfully!", {
+          position: 'top-center',
+          autoClose: 3000,
+          className: 'custom-toast'
+        });
+
+  // Delay navigation so the toast is visible
+   
         // Show toast with Cancel Booking button
         const bookingId = res.data.booking._id; // Adjust if your API returns the booking id differently
-        toast(
-          ({ closeToast }) => (
-            <div>
-              Booking successful!
-              <button
-                style={{ marginLeft: 10 }}
-                onClick={() => {
-                  axios.delete(`/api/v1/bookings/${bookingId}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                  })
-                    .then(() => {
-                      toast.success('Booking cancelled!');
-                      closeToast();
-                    })
-                    .catch(() => toast.error('Failed to cancel booking.'));
-                }}
-            >
-                Cancel Booking
-              </button>
-            </div>
-          ),
-          { autoClose: 3000 }
-        );
+        // toast(
+        //   ({ closeToast }) => (
+        //     <div>
+        //       Booking successful!
+        //       <button
+        //         style={{ marginLeft: 10 }}
+        //         onClick={() => {
+        //           axios.delete(`/api/v1/bookings/${bookingId}`, {
+        //             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        //           })
+        //             .then(() => {
+        //               toast.success('Booking cancelled!');
+        //               closeToast();
+        //             })
+        //             .catch(() => toast.error('Failed to cancel booking.'));
+        //         }}
+        //     >
+        //         Cancel Booking
+        //       </button>
+        //     </div>
+        //   ),
+        //   { autoClose: 3000 }
+        // );
+        setTimeout(() => {
       navigate('/'); // Redirect to homepage after booking
-    })
+    }, 3000)
+  })
     .catch(() => toast.error('Booking failed.'));
 };
 
@@ -63,6 +76,8 @@ const EventDetails = () => {
 
  return (
   <div className="event-details-card">
+<ToastContainer />
+
 <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
   <button
     onClick={() => navigate(-1)}
@@ -125,11 +140,23 @@ const EventDetails = () => {
           Price is now: ${tickets * event.ticketPrice}
         </span>
         <button type="submit">Confirm Booking</button>
-        <button type="button" onClick={() => setShowBooking(false)} style={{ marginLeft: "10px" }}>
-          Don't book
-        </button>
+       <button
+  type="button"
+  onClick={() => {
+    setShowBooking(false);
+    toast.info('Booking cancelled', {
+      position: 'top-center',
+      autoClose: 3000,
+      className: 'custom-toast'
+    });
+  }}
+  style={{ marginLeft: "10px" }}
+>
+  Don't book
+</button>
       </form>
     )}
+
   </div>
 );
 };
