@@ -42,37 +42,40 @@ const EventDetails = () => {
 
 
 
-const showConfirmCancelToast = (bookingId) => {
-  toast(
-    ({ closeToast }) => (
-      <div>
-        Are you sure you want to cancel this booking?
-        <button
-          style={{ marginLeft: 10 }}
-          onClick={() => {
-            axios.delete(`/api/v1/bookings/${bookingId}`, {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-            })
-              .then(() => {
-                toast.success('Booking cancelled!');
-                closeToast();
-                // optionally, refresh bookings or redirect here
-              })
-              .catch(() => toast.error('Failed to cancel booking.'));
-          }}
-        >
-          Confirm Cancel
-        </button>
-      </div>
-    ),
-    {
-      autoClose: false, // so it stays until user acts
-      closeOnClick: false,
-      draggable: false,
-      toastId: `confirm-cancel-${bookingId}`, // unique id so it doesn’t show multiple times
-    }
-  );
-};
+
+
+
+// const showConfirmCancelToast = (bookingId) => {
+//   toast(
+//     ({ closeToast }) => (
+//       <div>
+//         Are you sure you want to cancel this booking?
+//         <button
+//           style={{ marginLeft: 10 }}
+//           onClick={() => {
+//             axios.delete(`/api/v1/bookings/${bookingId}`, {
+//               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+//             })
+//               .then(() => {
+//                 toast.success('Booking cancelled!');
+//                 closeToast();
+//                 // optionally, refresh bookings or redirect here
+//               })
+//               .catch(() => toast.error('Failed to cancel booking.'));
+//           }}
+//         >
+//           Confirm Cancel
+//         </button>
+//       </div>
+//     ),
+//     {
+//       autoClose: false, // so it stays until user acts
+//       closeOnClick: false,
+//       draggable: false,
+//       toastId: `confirm-cancel-${bookingId}`, // unique id so it doesn’t show multiple times
+//     }
+//   );
+// };
 
 
   // Delay navigation so the toast is visible
