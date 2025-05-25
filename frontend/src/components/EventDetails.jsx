@@ -65,6 +65,7 @@ const EventDetails = () => {
         //   ),
         //   { autoClose: 3000 }
         // );
+        //
         setTimeout(() => {
       navigate('/'); // Redirect to homepage after booking
     }, 3000)
