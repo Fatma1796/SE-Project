@@ -37,42 +37,80 @@ const EventDetails = () => {
           autoClose: 3000,
           className: 'custom-toast'
         });
+               const bookingId = res.data.booking._id; // Adjust if your API returns the booking id differently
+
+
+
+
+const showConfirmCancelToast = (bookingId) => {
+  toast(
+    ({ closeToast }) => (
+      <div>
+        Are you sure you want to cancel this booking?
+        <button
+          style={{ marginLeft: 10 }}
+          onClick={() => {
+            axios.delete(`/api/v1/bookings/${bookingId}`, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+            })
+              .then(() => {
+                toast.success('Booking cancelled!');
+                closeToast();
+                // optionally, refresh bookings or redirect here
+              })
+              .catch(() => toast.error('Failed to cancel booking.'));
+          }}
+        >
+          Confirm Cancel
+        </button>
+      </div>
+    ),
+    {
+      autoClose: false, // so it stays until user acts
+      closeOnClick: false,
+      draggable: false,
+      toastId: `confirm-cancel-${bookingId}`, // unique id so it doesn’t show multiple times
+    }
+  );
+};
+
 
   // Delay navigation so the toast is visible
    
         // Show toast with Cancel Booking button
-        const bookingId = res.data.booking._id; // Adjust if your API returns the booking id differently
-        // toast(
-        //   ({ closeToast }) => (
-        //     <div>
-        //       Booking successful!
-        //       <button
-        //         style={{ marginLeft: 10 }}
-        //         onClick={() => {
-        //           axios.delete(`/api/v1/bookings/${bookingId}`, {
-        //             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-        //           })
-        //             .then(() => {
-        //               toast.success('Booking cancelled!');
-        //               closeToast();
-        //             })
-        //             .catch(() => toast.error('Failed to cancel booking.'));
-        //         }}
-        //     >
-        //         Cancel Booking
-        //       </button>
-        //     </div>
-        //   ),
-        //   { autoClose: 3000 }
-        // );
-        //
+      //   toast(
+      //     ({ closeToast }) => (
+      //       <div>
+      //         Booking successful!
+      //         <button
+      //           style={{ marginLeft: 10 }}
+      //           onClick={() => {
+      //             axios.delete(`/api/v1/bookings/${bookingId}`, {
+      //               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      //             })
+      //               .then(() => {
+      //                 toast.success('Booking cancelled!');
+      //                 closeToast();
+      //               })
+      //               .catch(() => toast.error('Failed to cancel booking.'));
+      //           }}
+      //       >
+      //           Cancel Booking
+      //         </button>
+      //       </div>
+      //     ),
+      //     { autoClose: 3000 }
+      //   );
+
+
         setTimeout(() => {
       navigate('/'); // Redirect to homepage after booking
     }, 3000)
   })
+
     .catch(() => toast.error('Booking failed.'));
 };
-
+              
   if (!event) return <div>Loading...</div>;
 
  return (
