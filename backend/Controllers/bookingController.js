@@ -1,4 +1,3 @@
-
 const Booking = require("../Models/Booking");
 const Event = require("../Models/Event");
 
@@ -217,9 +216,20 @@ const getBookingById = async (req, res) => {
   }
 };
 
+// Get all bookings for the current user
+const getCurrentUserBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ user: req.user.id }).populate("event");
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: error.message || "An error occurred while fetching bookings" });
+  }
+};
+
 module.exports = {
     bookTickets,
     getBookingById,
     cancelBooking,
+    getCurrentUserBookings,
     //getUserBookings,
   };

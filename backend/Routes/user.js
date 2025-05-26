@@ -64,7 +64,10 @@ router.get(
 );
 
 
-router.get("/bookings", authenticateUser, getCurrentUserBookings);
+router.get("/bookings", (req, res, next) => {
+  console.log("GET /api/v1/users/bookings hit");
+  next();
+}, authenticateUser, getCurrentUserBookings);
 
 
 // router.put("/forgetPassword", (req, res, next) => {

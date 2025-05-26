@@ -45,11 +45,14 @@ app.use("/api/v1/events", eventRouter); // Public route, no authenticateUser mid
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/bookings", bookingRouter);
 
-app.use("/api/v1/booking", authenticateUser, bookingRouter);  // Example protected route
-app.use("/api/v1/users", authenticateUser, userRouter); // Protected users rout
-app.use("/api/v1", bookingRouter);
-app.use("/api/v1", userRouter);
-app.use("/api/v1", eventRouter);
+
+//COMMENTED 26/5 10:55 
+//IT CAUSED ERRORS BUT COMMENTING IT DID NOT MAKE IT WORK ENTIRELY
+// app.use("/api/v1/booking", authenticateUser, bookingRouter);  // Example protected route
+// app.use("/api/v1/users", authenticateUser, userRouter); // Protected users rout
+// app.use("/api/v1", bookingRouter);
+// app.use("/api/v1", userRouter);
+// app.use("/api/v1", eventRouter);
 
 // app.use("/api/v1/users", userRouter);
 // app.use("/api/v1", userRouter);
