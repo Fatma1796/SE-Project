@@ -7,6 +7,8 @@ import FullPageSpinner from '../components/common/FullPageSpinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../CSSmodules/HomePage.css'; 
+import '../CSSmodules/ProfilePage.css';
+
 
 const ProfilePage = () => {
     const { user, role, loading: authLoading } = useAuth();
@@ -91,15 +93,15 @@ const ProfilePage = () => {
                     <h1>My Profile</h1>
                 </div>
                 <div className="card-body">
-                    <div className="mb-3">
+                    <div className="profile-info">
                         <label className="form-label">Name:</label>
                         <p>{name}</p>
                     </div>
-                    <div className="mb-3">
+                    <div className="profile-info">
                         <label className="form-label">Email:</label>
                         <p>{email}</p>
                     </div>
-                    <div className="mb-3">
+                    <div className="profile-info">
                         <label className="form-label">Role:</label>
                         <p>{role}</p>
                     </div>

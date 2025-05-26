@@ -1,6 +1,9 @@
+//APP.JSX
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
+import backgroundImage from './assets/backgr.jpg'; // Import the image
 import Navbar from './components/layout/Navbar';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
@@ -25,6 +28,24 @@ import UpdateProfilePage from './pages/UpdateProfilePage'; // Import the UpdateP
 import { LoadingProvider } from './context/LoadingContext';
 
 function App() {
+  // Set the background image using useEffect
+  React.useEffect(() => {
+    document.body.style.backgroundImage = `url(${backgroundImage})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundAttachment = 'fixed';
+    
+    // Add a cleanup function to remove the background when unmounting
+    return () => {
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundPosition = '';
+      document.body.style.backgroundRepeat = '';
+      document.body.style.backgroundAttachment = '';
+    };
+  }, []);
+  
   return (
     <Router>
       <AuthProvider>

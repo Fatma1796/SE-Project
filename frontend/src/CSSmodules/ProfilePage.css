@@ -1,0 +1,257 @@
+/* Main container styling */
+.container {
+  max-width: 900px;
+  margin: 0.5rem auto;
+  padding: 0 2rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Navbar styling */
+.navbar {
+  background: linear-gradient(to right, #1f2937, #374151);
+  padding: 0.5rem 2rem; /* Reduced padding */
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 1.5rem; /* Slightly smaller font */
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2;
+  align-items: center;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.3rem 1rem; /* Reduced padding */
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Profile Card styling */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(229, 231, 235, 0.3);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  padding: 2rem;
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+}
+
+.card-header h1 {
+  color: white;
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card-body {
+  padding: 2.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #1a237e;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+  display: block;
+}
+
+.profile-info {
+  background: rgba(244, 245, 247, 0.5);
+  padding: 1.2rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  transition: all 0.3s ease;
+}
+
+.profile-info:hover {
+  background: rgba(244, 245, 247, 0.8);
+  transform: translateX(5px);
+}
+
+.profile-info p {
+  font-size: 1.2rem;
+  color: #37474f;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #1a237e, #283593);
+  border: none;
+  padding: 1rem 2.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(26, 35, 126, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+  background: linear-gradient(135deg, #283593, #1a237e);
+}
+
+/* Notification styling */
+.navbar-notifications {
+  position: relative;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Theme toggle styling */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Search bar styling */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 0.3rem 1rem;
+  margin-right: 1rem;
+}
+
+.search-bar input {
+  background: transparent;
+  border: none;
+  color: white;
+  outline: none;
+  width: 200px;
+}
+
+.search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+  }
+
+  .card-header h1 {
+    font-size: 2rem;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 0.8rem;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.5rem;
+  }
+}

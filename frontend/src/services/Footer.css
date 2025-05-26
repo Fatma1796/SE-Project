@@ -2,7 +2,7 @@
   background: linear-gradient(to right, #1f2937, #374151);
   color: white;
   text-align: center;
-  padding: 2rem 1rem;
+  padding: 0.2rem 0.2rem;
   position: sticky;
   bottom: 0;
   width: 100%;
@@ -16,16 +16,15 @@
 }
 
 .copyright {
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  font-size: 0.9rem; /* Smaller font */
+  margin-bottom: 0.5rem; /* Reduced margin */
   color: #e5e7eb;
   letter-spacing: 0.05em;
 }
 
 .contact-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: 1rem; /* Smaller font */
+  margin-bottom: 0.3rem; /* Reduced margin */
   color: #f3f4f6;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -34,14 +33,14 @@
 .social-links {
   display: flex;
   justify-content: center;
-  gap: 2rem;
-  margin-top: 1rem;
+  gap: 1.5rem; /* Reduced gap */
+  margin-top: 0.5rem; /* Reduced margin */
 }
 
 .social-link {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.8rem; /* Reduced padding */
   border-radius: 8px;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -66,6 +65,56 @@
 .social-icon {
   font-size: 1.25rem;
   margin-right: 0.5rem;
+}
+
+.quick-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.quick-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.quick-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.newsletter-signup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.newsletter-signup input {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+}
+
+.newsletter-signup button {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.newsletter-signup button:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 @media (max-width: 640px) {

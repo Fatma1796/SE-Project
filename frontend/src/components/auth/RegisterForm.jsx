@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import '../../CSSmodules/AuthForms.css';
 
 function RegisterForm() {
     const { register, error: authError, user } = useAuth();
@@ -77,19 +78,20 @@ function RegisterForm() {
     };
 
     return (
-        <div className="register-container">
-            <div className="card mx-auto" style={{ maxWidth: '500px' }}>
-                <div className="card-body">
-                    <h2 className="card-title text-center mb-4">Create an Account</h2>
-                    
+        <div className="auth-container">
+            <div className="card auth-card">
+                <div className="auth-header">
+                    <h2 className="auth-title">Create an Account</h2>
+                </div>
+                <div className="auth-body">
                     {(error || authError) && (
-                        <div className="alert alert-danger" role="alert">
+                        <div className="auth-alert auth-alert-danger" role="alert">
                             {error || authError}
                         </div>
                     )}
                     
                     {success && (
-                        <div className="alert alert-success" role="alert">
+                        <div className="auth-alert auth-alert-success" role="alert">
                             {success}
                         </div>
                     )}
@@ -105,8 +107,7 @@ function RegisterForm() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                autoComplete="name" // Add this
-
+                                autoComplete="name"
                             />
                         </div>
                         
@@ -171,7 +172,7 @@ function RegisterForm() {
                         <div className="d-grid">
                             <button 
                                 type="submit" 
-                                className="btn btn-primary"
+                                className="btn auth-submit-btn"
                                 disabled={loading}
                             >
                                 {loading ? 'Registering...' : 'Register'}
@@ -179,9 +180,9 @@ function RegisterForm() {
                         </div>
                     </form>
                     
-                    <div className="text-center mt-3">
+                    <div className="auth-footer">
                         <span>Already have an account? </span>
-                        <Link to="/login" className="text-decoration-none">
+                        <Link to="/login" className="auth-link">
                             Login
                         </Link>
                     </div>

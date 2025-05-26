@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext';
+import '../../CSSmodules/AuthForms.css';
 
 function LoginForm() {
     const { login, error: authError, user } = useAuth();
@@ -45,90 +46,51 @@ function LoginForm() {
     };
 
     return (
-        <div className="login-container">
-            <div className="card mx-auto" style={{ maxWidth: '450px' }}>
-                <div className="card-body">
-                    <h2 className="card-title text-center mb-4">Login</h2>
-                    
+        <div className="auth-container">
+            <div className="card auth-card">
+                <div className="auth-header">
+                    <h2 className="auth-title">Welcome Back</h2>
+                </div>
+                <div className="auth-body">
                     {(error || authError) && (
-                        <div className="alert alert-danger" role="alert">
+                        <div className="auth-alert auth-alert-danger" role="alert">
                             {error || authError}
                         </div>
                     )}
                     
-
-                      <form onSubmit={handleSubmit} noValidate>
+                    <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email</label>
+                            <label htmlFor="email" className="form-label">Email Address</label>
                             <input
                                 type="email"
-                                className="form-control"
                                 id="email"
                                 name="email"
+                                className="form-control"
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
                                 autoComplete="email"
-                                aria-describedby="emailHelp"
                             />
-                            <small id="emailHelp" className="form-text text-muted">
-                                Enter your registered email address
-                            </small>
                         </div>
-
-
-                    {/* <form onSubmit={handleSubmit} noValidate>
-                        <div className="mb-3">
-                            <label className="form-label">
-                                Email
-                                <input
-                                    type="email"
-                                    className="form-control mt-1"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </label>
-                            <small className="form-text text-muted">
-                                Enter your registered email address
-                            </small>
-                        </div> */}
                         
-                           <div className="mb-3">
+                        <div className="mb-3">
                             <label htmlFor="password" className="form-label">Password</label>
                             <input
                                 type="password"
-                                className="form-control"
                                 id="password"
                                 name="password"
+                                className="form-control"
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
                                 autoComplete="current-password"
-                                 aria-label="Password field"
                             />
                         </div>
-                        
-
-                        {/* <div className="mb-3">
-                            <label className="form-label">
-                                Password
-                                <input
-                                    type="password"
-                                    className="form-control mt-1"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </label>
-                        </div> */}
                         
                         <div className="d-grid">
                             <button 
                                 type="submit" 
-                                className="btn btn-primary"
+                                className="btn auth-submit-btn"
                                 disabled={loading}
                             >
                                 {loading ? 'Logging in...' : 'Login'}
@@ -136,17 +98,18 @@ function LoginForm() {
                         </div>
                     </form>
                     
-                    <div className="text-center mt-3">
-                        <Link to="/forgot-password" className="text-decoration-none">
-                            Forgot Password?
-                        </Link>
-                    </div>
-                    
-                    <div className="text-center mt-3">
-                        <span>Do not have an account? </span>
-                        <Link to="/register" className="text-decoration-none">
-                            Register
-                        </Link>
+                    <div className="auth-footer">
+                        <div className="mb-2">
+                            <Link to="/forgot-password" className="auth-link">
+                                Forgot Password?
+                            </Link>
+                        </div>
+                        <div>
+                            <span>Need an account? </span>
+                            <Link to="/register" className="auth-link">
+                                Register
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

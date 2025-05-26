@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useNavigate  } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import axios from 'axios';
+import '../../CSSmodules/AuthForms.css';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -12,9 +13,8 @@ function ForgotPassword() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const { forgotPassword } = useAuth();
-     const navigate = useNavigate(); // Add this hook for navigation
+    const navigate = useNavigate();
 
-    
     const handleRequestOtp = async (e) => {
         e.preventDefault();
         if (!email) {
@@ -67,12 +67,10 @@ function ForgotPassword() {
             setEmail('');
             setOtp('');
             setNewPassword('');
-                        // Show success message briefly before redirecting
+            // Show success message briefly before redirecting
             setTimeout(() => {
                 navigate('/login'); // Redirect to login page after 1.5 seconds
             }, 1500);
-
-            
         } catch (err) {
             console.error('Error resetting password:', err);
             setError(err.response?.data?.message || 'Failed to reset password. Please try again.');
@@ -82,10 +80,23 @@ function ForgotPassword() {
     };
 
     return (
-        <div className="forgot-password-container">
-            <div className="card mx-auto" style={{ maxWidth: '450px' }}>
-                <div className="card-body">
-                    <h2 className="card-title text-center mb-4">Forgot Password</h2>
+        <div className="auth-container">
+            <div className="card auth-card">
+                <div className="auth-header">
+                    <h2 className="auth-title">Forgot Password</h2>
+                </div>
+                <div className="auth-body">
+                    {error && (
+                        <div className="auth-alert auth-alert-danger" role="alert">
+                            {error}
+                        </div>
+                    )}
+                    
+                    {success && (
+                        <div className="auth-alert auth-alert-success" role="alert">
+                            {success}
+                        </div>
+                    )}
                     
                     {!showOtpForm ? (
                         <>
@@ -94,7 +105,7 @@ function ForgotPassword() {
                             </p>
                             
                             <form onSubmit={handleRequestOtp}>
-                                <div className="form-group mb-3">
+                                <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email Address</label>
                                     <input
                                         type="email"
@@ -104,14 +115,14 @@ function ForgotPassword() {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="Enter your email"
                                         required
-                                          autoComplete="email"
+                                        autoComplete="email"
                                     />
                                 </div>
                                 
                                 <div className="d-grid">
                                     <button 
                                         type="submit" 
-                                        className="btn btn-primary"
+                                        className="btn auth-submit-btn"
                                         disabled={loading}
                                     >
                                         {loading ? 'Sending OTP...' : 'Send OTP'}
@@ -126,7 +137,7 @@ function ForgotPassword() {
                             </p>
                             
                             <form onSubmit={handleResetPassword}>
-                                <div className="form-group mb-3">
+                                <div className="mb-3">
                                     <label htmlFor="otp" className="form-label">OTP</label>
                                     <input
                                         type="text"
@@ -136,13 +147,13 @@ function ForgotPassword() {
                                         onChange={(e) => setOtp(e.target.value)}
                                         placeholder="Enter OTP"
                                         required
-                                           autoComplete="one-time-code" // Add this
-                                            inputMode="numeric" 
-                                            pattern="[0-9]*" 
+                                        autoComplete="one-time-code"
+                                        inputMode="numeric" 
+                                        pattern="[0-9]*"
                                     />
                                 </div>
                                 
-                                <div className="form-group mb-3">
+                                <div className="mb-3">
                                     <label htmlFor="newPassword" className="form-label">New Password</label>
                                     <input
                                         type="password"
@@ -152,7 +163,7 @@ function ForgotPassword() {
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Enter new password"
                                         required
-                                        autoComplete="new-password" // Add this
+                                        autoComplete="new-password"
                                         minLength="6"
                                     />
                                 </div>
@@ -160,7 +171,7 @@ function ForgotPassword() {
                                 <div className="d-grid">
                                     <button 
                                         type="submit" 
-                                        className="btn btn-primary"
+                                        className="btn auth-submit-btn"
                                         disabled={loading}
                                     >
                                         {loading ? 'Resetting...' : 'Reset Password'}
@@ -170,20 +181,8 @@ function ForgotPassword() {
                         </>
                     )}
                     
-                    {error && (
-                        <div className="alert alert-danger mt-3" role="alert">
-                            {error}
-                        </div>
-                    )}
-                    
-                    {success && (
-                        <div className="alert alert-success mt-3" role="alert">
-                            {success}
-                        </div>
-                    )}
-                    
-                    <div className="text-center mt-3">
-                        <Link to="/login" className="text-decoration-none">
+                    <div className="auth-footer">
+                        <Link to="/login" className="auth-link">
                             Back to Login
                         </Link>
                     </div>
