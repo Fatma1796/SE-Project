@@ -22,20 +22,23 @@ function UpdateProfilePage() {
         }
     }, [user]);
 
-    const handleUpdateProfile = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+const handleUpdateProfile = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-        try {
-            await updateProfile({ name, email });
-            // Pass state indicating successful update
-            navigate('/profile', { state: { profileUpdated: true } });
-        } catch (error) {
-            toast.error(error.message || 'Failed to update profile');
-        } finally {
-            setLoading(false);
-        }
-    };
+  try {
+    await updateProfile({ name, email });
+    toast.success('Profile updated successfully!');
+    setTimeout(() => {
+      navigate('/profile', { state: { profileUpdated: true } });
+    }, 3000);
+  } catch (error) {
+    toast.error(error.message || 'Failed to update profile');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     if (pageLoading) {
         return <FullPageSpinner text="Loading profile data..." />;

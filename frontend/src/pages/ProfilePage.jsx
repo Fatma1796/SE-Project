@@ -88,7 +88,7 @@ const ProfilePage = () => {
             />
             <div className="card">
                 <div className="card-header">
-                    <h1>My Profile</h1>
+                    <h1>Welcome</h1>
                 </div>
                 <div className="card-body">
                     <div className="mb-3">

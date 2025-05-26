@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast ,ToastContainer} from 'react-toastify';
 import '../CSSmodules/BookingCard.css';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import FullPageSpinner from '../components/common/FullPageSpinner';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingDetailsPage = () => {
   const { id } = useParams();
@@ -24,25 +25,48 @@ const BookingDetailsPage = () => {
       .finally(() => setPageLoading(false));
   }, [id]);
 
-  const handleCancel = () => {
-    const token = localStorage.getItem('token');
-    setCancelLoading(true);
-    axios.delete(`/api/v1/bookings/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(() => {
-        toast.success('Booking cancelled!');
+  // const handleCancel = () => {
+  //   const token = localStorage.getItem('token');
+  //   setCancelLoading(true);
+  //   axios.delete(`/api/v1/bookings/${id}`, {
+  //     headers: { Authorization: `Bearer ${token}` }
+  //   })
+  //     .then(() => {
+  //       toast.success('Booking cancelled!');
+  //   //    navigate('/my-bookings');
+  //     })
+  //     .catch(() => toast.error('Failed to cancel booking.'))
+  //     .finally(() => setCancelLoading(false));
+  // };
+const handleCancel = () => {
+  const token = localStorage.getItem('token');
+  setCancelLoading(true);
+
+  axios.delete(`/api/v1/bookings/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(() => {
+      toast.success('Booking cancelled successfully!');
+      setTimeout(() => {
         navigate('/my-bookings');
-      })
-      .catch(() => toast.error('Failed to cancel booking.'))
-      .finally(() => setCancelLoading(false));
-  };
+      }, 3000); // Wait 3 seconds before navigating
+    })
+    .catch(() => {
+      toast.error('Failed to cancel booking.');
+    })
+    .finally(() => {
+      setCancelLoading(false);
+    });
+};
+
 
   if (pageLoading) return <FullPageSpinner text="Loading booking details..." />;
   if (!booking) return <div>No booking found with this ID.</div>;
 
   return (
     <div className="booking-card" style={{ position: "relative", minHeight: "100px" }}>
+       <ToastContainer />
+
       <button
         onClick={() => navigate(-1)}
         style={{
